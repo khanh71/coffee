@@ -1,26 +1,80 @@
 (function($) {
   'use strict';
-  $('#defaultconfig').maxlength({
+  $('#email').maxlength({
+    alwaysShow: true,
+    threshold: 50,
     warningClass: "badge mt-1 badge-success",
     limitReachedClass: "badge mt-1 badge-danger"
   });
 
-  $('#defaultconfig-2').maxlength({
+  $('#password').maxlength({
     alwaysShow: true,
-    threshold: 20,
+    threshold: 50,
     warningClass: "badge mt-1 badge-success",
     limitReachedClass: "badge mt-1 badge-danger"
   });
 
-  $('#defaultconfig-3').maxlength({
+  $('#repassword').maxlength({
     alwaysShow: true,
-    threshold: 10,
+    threshold: 50,
     warningClass: "badge mt-1 badge-success",
-    limitReachedClass: "badge mt-1 badge-danger",
-    separator: ' of ',
-    preText: 'You have ',
-    postText: ' chars remaining.',
-    validate: true
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#name').maxlength({
+    alwaysShow: true,
+    threshold: 50,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#address').maxlength({
+    alwaysShow: true,
+    threshold: 150,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#shopname').maxlength({
+    alwaysShow: true,
+    threshold: 50,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#shopaddress').maxlength({
+    alwaysShow: true,
+    threshold: 50,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#posname').maxlength({
+    alwaysShow: true,
+    threshold: 50,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#posnameedit').maxlength({
+    alwaysShow: true,
+    threshold: 50,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#nameedit').maxlength({
+    alwaysShow: true,
+    threshold: 50,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#addressedit').maxlength({
+    alwaysShow: true,
+    threshold: 150,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
   });
 
   $('#maxlength-textarea').maxlength({

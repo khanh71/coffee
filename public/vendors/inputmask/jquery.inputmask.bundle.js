@@ -1275,7 +1275,7 @@
                 removeMaskOnSubmit: !1,
                 clearMaskOnLostFocus: !0,
                 insertMode: !0,
-                clearIncomplete: !1,
+                clearIncomplete: !0,
                 alias: null,
                 onKeyDown: $.noop,
                 onBeforeMask: null,
@@ -2795,14 +2795,16 @@
                 }
             },
             currency: {
-                prefix: "$ ",
+                suffix: " ₫",
                 groupSeparator: ",",
                 alias: "numeric",
                 placeholder: "0",
                 autoGroup: !0,
-                digits: 2,
+                digits: 0,
                 digitsOptional: !1,
-                clearMaskOnLostFocus: !1
+                clearMaskOnLostFocus: !1,
+                min: 0,
+                max: 100000000
             },
             decimal: {
                 alias: "numeric"

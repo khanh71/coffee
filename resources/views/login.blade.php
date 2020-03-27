@@ -29,24 +29,40 @@
                                 <img src="{{asset('images/logo-dark.svg')}}" alt="logo">
                             </div>
                             <h4>ĐĂNG NHẬP</h4>
-                            <form class="pt-3">
+                            <form class="pt-3" id="loginForm" action="{{route('login')}}" method="POST">
+                                @if(Session::has('message'))
+                                <div class="alert alert-fill-danger" role="alert">
+                                    <i class="mdi mdi-information-outline"></i>
+                                    {{Session::get('message')}}
+                                </div>
+                                @endif
+                                @if(isset($message))
+                                <div class="alert alert-fill-success" role="alert">
+                                    <i class="mdi mdi-information-outline"></i>
+                                    {{$message}}
+                                </div>
+                                @endif
+                                {{csrf_field()}}
                                 <div class="form-group">
-                                    <input type="email" class="form-control form-control-lg" id="exampleInputEmail1" placeholder="Tên đăng nhập">
+                                    <input type="text" class="form-control form-control-lg" id="username" name="username" value="{{old('username')}}" placeholder="Tên đăng nhập" autofocus required>
                                 </div>
                                 <div class="form-group">
-                                    <input type="password" class="form-control form-control-lg" id="exampleInputPassword1" placeholder="Mật khẩu">
+                                    <input type="password" class="form-control form-control-lg" id="password" name="password" placeholder="Mật khẩu" required>
                                 </div>
                                 <div class="mt-3">
-                                    <a class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn" href="../../index.html">ĐĂNG NHẬP</a>
+                                    <button type="submit" class="btn btn-block btn-primary btn-lg font-weight-medium auth-form-btn">ĐĂNG NHẬP</button>
                                 </div>
                                 <div class="my-2 d-flex justify-content-between align-items-center">
                                     <div class="form-check">
                                         <label class="form-check-label text-muted">
-                                            <input type="checkbox" class="form-check-input">
+                                            <input type="checkbox" class="form-check-input" id="remember" name="remember">
                                             Lưu mật khẩu
                                         </label>
                                     </div>
                                     <a href="#" class="auth-link text-black">Quên mật khẩu</a>
+                                </div>
+                                <div class="text-center mt-4 font-weight-light">
+                                    Chưa có tài khoản? <a href="{{route('register')}}" class="text-primary">Đăng ký ngay</a>
                                 </div>
                             </form>
                         </div>
@@ -67,6 +83,8 @@
     <script src="{{asset('js/template.js')}}"></script>
     <script src="{{asset('js/settings.js')}}"></script>
     <script src="{{asset('js/todolist.js')}}"></script>
+    <script src="{{asset('vendors/jquery-validation/jquery.validate.min.js')}}"></script>
+    <script src="{{asset('js/form-validation.js')}}"></script>
     <!-- endinject -->
 </body>
 

@@ -1,97 +1,317 @@
-(function($) {
+(function ($) {
   'use strict';
-  $.validator.setDefaults({
-    submitHandler: function() {
-      alert("submitted!");
-    }
-  });
-  $(function() {
-    // validate the comment form when it is submitted
-    $("#commentForm").validate({
-      errorPlacement: function(label, element) {
-        label.addClass('mt-2 text-danger');
-        label.insertAfter(element);
-      },
-      highlight: function(element, errorClass) {
-        $(element).parent().addClass('has-danger')
-        $(element).addClass('form-control-danger')
-      }
-    });
-    // validate signup form on keyup and submit
+  $(function () {
     $("#signupForm").validate({
       rules: {
-        firstname: "required",
-        lastname: "required",
-        username: {
-          required: true,
-          minlength: 2
-        },
         password: {
           required: true,
-          minlength: 5
+          minlength: 8
         },
-        confirm_password: {
+        repassword: {
           required: true,
-          minlength: 5,
+          minlength: 8,
           equalTo: "#password"
         },
         email: {
+          required: true
+        },
+        name: {
           required: true,
-          email: true
+          minlength: 10
         },
-        topic: {
-          required: "#newsletter:checked",
-          minlength: 2
+        address: {
+          required: true
         },
-        agree: "required"
+        birthday: {
+          required: true
+        },
+        phone: {
+          required: true
+        },
+        shopname: {
+          required: true
+        },
+        shopaddress: {
+          required: true
+        }
       },
       messages: {
-        firstname: "Please enter your firstname",
-        lastname: "Please enter your lastname",
-        username: {
-          required: "Please enter a username",
-          minlength: "Your username must consist of at least 2 characters"
-        },
         password: {
-          required: "Please provide a password",
-          minlength: "Your password must be at least 5 characters long"
+          required: "Vui lòng nhập mật khẩu",
+          minlength: "Mật khẩu tối thiểu 8 ký tự"
         },
-        confirm_password: {
-          required: "Please provide a password",
-          minlength: "Your password must be at least 5 characters long",
-          equalTo: "Please enter the same password as above"
+        repassword: {
+          required: "Vui lòng nhập lại mật khẩu",
+          minlength: "Mật khẩu tối thiểu 8 ký tự",
+          equalTo: "Mật khẩu xác nhận không khớp"
         },
-        email: "Please enter a valid email address",
-        agree: "Please accept our policy",
-        topic: "Please select at least 2 topics"
+        email: {
+          required: "Vui lòng nhập tên đăng nhập"
+        },
+        name: {
+          required: "Vui lòng nhập họ tên",
+          minlength: "Họ tên tối thiểu 10 ký tự"
+        },
+        address: {
+          required: "Vui lòng nhập địa chỉ"
+        },
+        birthday: {
+          required: "Vui lòng nhập ngày sinh",
+        },
+        phone: {
+          required: "Vui lòng nhập số điện thoại"
+        },
+        shopname: {
+          required: "Vui lòng nhập tên cửa hàng"
+        },
+        shopaddress: {
+          required: "Vui lòng nhập địa chỉ cửa hàng"
+        }
       },
-      errorPlacement: function(label, element) {
+      errorPlacement: function (label, element) {
         label.addClass('mt-2 text-danger');
         label.insertAfter(element);
       },
-      highlight: function(element, errorClass) {
+      success: function (label, element) {
+        label.parent().removeClass('has-danger');
+        label.remove();
+      },
+      highlight: function (element, errorClass) {
         $(element).parent().addClass('has-danger')
         $(element).addClass('form-control-danger')
       }
     });
-    // propose username by combining first- and lastname
-    $("#username").focus(function() {
-      var firstname = $("#firstname").val();
-      var lastname = $("#lastname").val();
-      if (firstname && lastname && !this.value) {
-        this.value = firstname + "." + lastname;
+
+    $("#loginForm").validate({
+      rules: {
+        username: {
+          required: true
+        },
+        password: {
+          required: true,
+          minlength: 8
+        },
+      },
+      messages: {
+        password: {
+          required: "Vui lòng nhập mật khẩu",
+          minlength: "Mật khẩu tối thiểu 8 ký tự"
+        },
+        username: {
+          required: "Vui lòng nhập tên đăng nhập",
+        }
+      },
+      errorPlacement: function (label, element) {
+        label.addClass('mt-2 text-danger');
+        label.insertAfter(element);
+      },
+      success: function (label, element) {
+        label.parent().removeClass('has-danger');
+        label.remove();
+      },
+      highlight: function (element, errorClass) {
+        $(element).parent().addClass('has-danger')
+        $(element).addClass('form-control-danger')
       }
     });
-    //code to hide topic selection, disable for demo
-    var newsletter = $("#newsletter");
-    // newsletter topics are optional, hide at first
-    var inital = newsletter.is(":checked");
-    var topics = $("#newsletter_topics")[inital ? "removeClass" : "addClass"]("gray");
-    var topicInputs = topics.find("input").attr("disabled", !inital);
-    // show when newsletter is checked
-    newsletter.on("click", function() {
-      topics[this.checked ? "removeClass" : "addClass"]("gray");
-      topicInputs.attr("disabled", !this.checked);
+
+    $("#newPositionForm").validate({
+      rules: {
+        posname: {
+          required: true
+        },
+        coefficient: {
+          required: true
+        },
+      },
+      messages: {
+        posname: {
+          required: "Vui lòng nhập tên chức vụ"
+        },
+        coefficient: {
+          required: "Vui lòng nhập hệ số lương",
+        }
+      },
+      errorPlacement: function (label, element) {
+        label.addClass('mt-2 text-danger');
+        label.insertAfter(element);
+      },
+      success: function (label, element) {
+        label.parent().removeClass('has-danger');
+        label.remove();
+      },
+      highlight: function (element, errorClass) {
+        $(element).parent().addClass('has-danger')
+        $(element).addClass('form-control-danger')
+      }
     });
+
+    $("#editPositionForm").validate({
+      rules: {
+        posnameedit: {
+          required: true
+        },
+        coefficientedit: {
+          required: true
+        },
+      },
+      messages: {
+        posnameedit: {
+          required: "Vui lòng nhập tên chức vụ"
+        },
+        coefficientedit: {
+          required: "Vui lòng nhập hệ số lương",
+        }
+      },
+      errorPlacement: function (label, element) {
+        label.addClass('mt-2 text-danger');
+        label.insertAfter(element);
+      },
+      success: function (label, element) {
+        label.parent().removeClass('has-danger');
+        label.remove();
+      },
+      highlight: function (element, errorClass) {
+        $(element).parent().addClass('has-danger')
+        $(element).addClass('form-control-danger')
+      }
+    });
+
+    $("#newEmployeeForm").validate({
+      rules: {
+        password: {
+          required: true,
+          minlength: 8
+        },
+        email: {
+          required: true
+        },
+        name: {
+          required: true,
+          minlength: 10
+        },
+        address: {
+          required: true
+        },
+        birthday: {
+          required: true
+        },
+        phone: {
+          required: true
+        },
+        startday: {
+          required: true
+        },
+        basesalary: {
+          required: true
+        }
+      },
+      messages: {
+        password: {
+          required: "Vui lòng nhập mật khẩu",
+          minlength: "Mật khẩu tối thiểu 8 ký tự"
+        },
+        email: {
+          required: "Vui lòng nhập tên đăng nhập"
+        },
+        name: {
+          required: "Vui lòng nhập họ tên",
+          minlength: "Họ tên tối thiểu 10 ký tự"
+        },
+        address: {
+          required: "Vui lòng nhập địa chỉ"
+        },
+        birthday: {
+          required: "Vui lòng nhập ngày sinh",
+        },
+        phone: {
+          required: "Vui lòng nhập số điện thoại"
+        },
+        startday: {
+          required: "Vui lòng nhập ngày vào làm"
+        },
+        basesalary: {
+          required: "Vui lòng nhập lương cơ bản"
+        }
+      },
+      errorPlacement: function (label, element) {
+        label.addClass('mt-2 text-danger');
+        label.insertAfter(element);
+      },
+      success: function (label, element) {
+        label.parent().removeClass('has-danger');
+        label.remove();
+      },
+      highlight: function (element, errorClass) {
+        $(element).parent().addClass('has-danger')
+        $(element).addClass('form-control-danger')
+      }
+    });
+
+    $("#editEmployeeForm").validate({
+      rules: {
+        nameedit: {
+          required: true,
+          minlength: 10
+        },
+        addressedit: {
+          required: true
+        },
+        birthdayedit: {
+          required: true
+        },
+        phoneedit: {
+          required: true
+        },
+        startdayedit: {
+          required: true
+        },
+        basesalaryedit: {
+          required: true
+        }
+      },
+      messages: {
+        nameedit: {
+          required: "Vui lòng nhập họ tên",
+          minlength: "Họ tên tối thiểu 10 ký tự"
+        },
+        addressedit: {
+          required: "Vui lòng nhập địa chỉ"
+        },
+        birthdayedit: {
+          required: "Vui lòng nhập ngày sinh",
+        },
+        phoneedit: {
+          required: "Vui lòng nhập số điện thoại"
+        },
+        startdayedit: {
+          required: "Vui lòng nhập ngày vào làm"
+        },
+        basesalaryedit: {
+          required: "Vui lòng nhập lương cơ bản"
+        }
+      },
+      errorPlacement: function (label, element) {
+        label.addClass('mt-2 text-danger');
+        label.insertAfter(element);
+      },
+      success: function (label, element) {
+        label.parent().removeClass('has-danger');
+        label.remove();
+      },
+      highlight: function (element, errorClass) {
+        $(element).parent().addClass('has-danger')
+        $(element).addClass('form-control-danger')
+      }
+    });
+
+
+
+
+
+
+
+
+
   });
 })(jQuery);
