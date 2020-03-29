@@ -1,40 +1,50 @@
-(function($) {
+(function ($) {
   'use strict';
-  if ($("#timepicker-example").length) {
-    $('#timepicker-example').datetimepicker({
-      format: 'LT'
-    });
-  }
-  if ($(".color-picker").length) {
-    $('.color-picker').asColorPicker();
-  }
-  if ($("#datepicker-popup").length) {
-    $('#datepicker-popup').datepicker({
+  if ($("#datepicker-popup-startday").length) {
+    $('#datepicker-popup-startday').datepicker({
       enableOnReadonly: true,
       todayHighlight: true,
+      autoclose: true,
+    }).on('changeDate', function (selected) {
+        var minDate = new Date(selected.date.valueOf());
+        $('#endday').datepicker('setStartDate', minDate);
     });
   }
-  if ($("#inline-datepicker").length) {
-    $('#inline-datepicker').datepicker({
+
+  if ($("#datepicker-popup-endday").length) {
+    $('#datepicker-popup-endday').datepicker({
       enableOnReadonly: true,
       todayHighlight: true,
+      autoclose: true,
+    }).on('changeDate', function (selected) {
+            var maxDate = new Date(selected.date.valueOf());
+            $('#startday').datepicker('setEndDate', maxDate);
+        });
+  }
+
+  if ($("#datepicker-popup-startday-edit").length) {
+    $('#datepicker-popup-startday-edit').datepicker({
+      enableOnReadonly: true,
+      todayHighlight: true,
+      autoclose: true,
+    }).on('changeDate', function (selected) {
+      var minDate = new Date(selected.date.valueOf());
+      $('#enddayedit').datepicker('setStartDate', minDate);
     });
   }
-  if ($(".datepicker-autoclose").length) {
-    $('.datepicker-autoclose').datepicker({
-      autoclose: true
+
+  if ($("#datepicker-popup-endday-edit").length) {
+    $('#datepicker-popup-endday-edit').datepicker({
+      enableOnReadonly: true,
+      todayHighlight: true,
+      autoclose: true,
+    }).on('changeDate', function (selected) {
+      var maxDate = new Date(selected.date.valueOf());
+      $('#startdayedit').datepicker('setEndDate', maxDate);
     });
   }
-  if ($('input[name="date-range"]').length) {
-    $('input[name="date-range"]').daterangepicker();
-  }
-  if ($('input[name="date-time-range"]').length) {
-    $('input[name="date-time-range"]').daterangepicker({
-      timePicker: true,
-      timePickerIncrement: 30,
-      locale: {
-        format: 'MM/DD/YYYY h:mm A'
-      }
-    });
-  }
+
+
+
+
 })(jQuery);

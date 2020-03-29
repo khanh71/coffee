@@ -77,9 +77,74 @@
     limitReachedClass: "badge mt-1 badge-danger"
   });
 
-  $('#maxlength-textarea').maxlength({
+  $('#zonename').maxlength({
     alwaysShow: true,
+    threshold: 100,
     warningClass: "badge mt-1 badge-success",
     limitReachedClass: "badge mt-1 badge-danger"
   });
+
+  $('#zonenameedit').maxlength({
+    alwaysShow: true,
+    threshold: 100,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#deskname').maxlength({
+    alwaysShow: true,
+    threshold: 50,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#desknameedit').maxlength({
+    alwaysShow: true,
+    threshold: 50,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#vouchername').maxlength({
+    alwaysShow: true,
+    threshold: 100,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#vouchernameedit').maxlength({
+    alwaysShow: true,
+    threshold: 100,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#suppname').maxlength({
+    alwaysShow: true,
+    threshold: 50,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#suppaddress').maxlength({
+    alwaysShow: true,
+    threshold: 100,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#suppnameedit').maxlength({
+    alwaysShow: true,
+    threshold: 50,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#suppaddressedit').maxlength({
+    alwaysShow: true,
+    threshold: 100,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
 })(jQuery);

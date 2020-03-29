@@ -1,5 +1,5 @@
 @extends('app')
-@section('title','Quản lý chức vụ')
+@section('title','Quản lý Bàn')
 @section('css')
 <link rel="stylesheet" href="{{asset('vendors/datatables.net-bs4/dataTables.bootstrap4.css')}}">
 <link rel="stylesheet" href="{{asset('vendors/jquery-toast-plugin/jquery.toast.min.css')}}">
@@ -26,7 +26,7 @@
 @if(Session::has('succ')) <script>
     swal({
         title: "Thành công",
-        text: "Xóa chức vụ thành công",
+        text: "Xóa bàn thành công",
         icon: "success"
     });
 </script> @endif
@@ -34,53 +34,52 @@
 @if(Session::has('error')) <script>
     swal({
         title: "Lỗi",
-        text: "Chức vụ này đã được sử dụng, không thể xóa",
+        text: "Bàn này đã được sử dụng, không thể xóa",
         icon: "error"
     });
 </script> @endif
 <script type="text/javascript">
-    @if(count($errors -> postNewPosition_Error) > 0)
+    @if(count($errors -> postNewDesk_Error) > 0)
     $('#new').modal('show');
     @endif
-    @if(count($errors -> postEditPosition_Error) > 0)
+    @if(count($errors -> postEditDesk_Error) > 0)
     $('#edit').modal('show');
     @endif
 
     $("#new").on('shown.bs.modal', function() {
-        $(this).find('#posname').focus();
+        $(this).find('#deskname').focus();
     });
     $('#edit').on('show.bs.modal', function(event) {
         var button = $(event.relatedTarget);
-        var idpos = button.data('idpos');
-        var posname = button.data('posname');
-        var coefficient = button.data('coefficient');
+        var iddesk = button.data('iddesk');
+        var deskname = button.data('deskname');
         var model = $(this);
-        model.find('#idpos').val(idpos);
-        model.find('#posnameedit').val(posname);
-        model.find('#coefficientedit').val(coefficient);
+        model.find('#iddesk').val(iddesk);
+        model.find('#desknameedit').val(deskname);
     })
 
     $('#delete').on('show.bs.modal', function(event) {
         var button = $(event.relatedTarget);
-        var idpos = button.data('idpos');
+        var iddesk = button.data('iddesk');
         var model = $(this);
-        model.find('#idposdel').val(idpos);
+        model.find('#iddeskdel').val(iddesk);
     })
 </script>
 @endsection
 
 @section('content')
-<!--list of position-->
+<!--list of desk-->
 <div class="card">
     <div class="card-body">
-        <div class="card-title text-left">Quản lý Chức vụ</div>
+        <div class="card-title text-left">Quản lý Bàn</div>
         <div class="row">
             <div class="col-12">
+                @if($zones->count()>0)
                 <div class="row">
-                    <form action="{{route('position')}}" method="post" class="col-md-9">
+                    <form action="{{route('desk')}}" method="post" class="col-md-9">
                         {{csrf_field()}}
                         <div class="form-group input-group">
-                            <input name="search" type="text" class="form-control text-capitalize" placeholder="Nhập chức vụ bạn cần tìm vào đây nhé..." value="{{$search}}" autofocus>
+                            <input name="search" type="text" class="form-control text-capitalize" placeholder="Nhập bàn bạn cần tìm vào đây nhé..." value="{{$search}}" autofocus>
                             <span class="input-group-append">
                                 <button type="submit" class="btn btn-icon-text btn-primary"><i class="mdi mdi-magnify btn-icon-prepend"></i>Tìm Kiếm</button>
                             </span>
@@ -93,23 +92,23 @@
                         <thead>
                             <tr>
                                 <th>STT</th>
-                                <th>Tên chức vụ</th>
-                                <th>Hệ số lương</th>
+                                <th>Tên bàn</th>
+                                <th>Khu vực</th>
                                 <th>Sửa</th>
                                 <th>Xóa</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($positions as $key=>$pos)
-                            <tr id="{{$pos->idpos}}">
+                            @forelse($desks as $key=>$desk)
+                            <tr id="{{$desk->iddesk}}">
                                 <td>{{$key+1}}</td>
-                                <td>{{$pos->posname}}</td>
-                                <td>{{$pos->coefficient}}</td>
+                                <td>{{$desk->deskname}}</td>
+                                <td>{{$desk->zonename}}</td>
                                 <td>
-                                    <button class="btn btn-info btn-rounded btn-icon" data-idpos="{{$pos->idpos}}" data-posname="{{$pos->posname}}" data-coefficient="{{$pos->coefficient}}" data-toggle="modal" data-target="#edit"><i class="mdi mdi-pencil"></i></button>
+                                    <button class="btn btn-info btn-rounded btn-icon" data-iddesk="{{$desk->iddesk}}" data-deskname="{{$desk->deskname}}" data-toggle="modal" data-target="#edit"><i class="mdi mdi-pencil"></i></button>
                                 </td>
                                 <td>
-                                    <button class="btn btn-icon btn-rounded btn-danger" data-idpos="{{$pos->idpos}}" data-toggle="modal" data-target="#delete"><i class="mdi mdi-delete-forever"></i></button>
+                                    <button class="btn btn-icon btn-rounded btn-danger" data-iddesk="{{$desk->iddesk}}" data-toggle="modal" data-target="#delete"><i class="mdi mdi-delete-forever"></i></button>
                                 </td>
                             </tr>
                             @empty
@@ -120,26 +119,33 @@
                         </tbody>
                     </table>
                 </div>
+                @else
+                <div class="text-center">
+                    <p>Chưa có khu vực nào trong cửa hàng được thiết lập.</p>
+                    <p>Vui lòng thêm khu vực vào cửa hàng và quay lại sau nhé.</p>
+                    <a class="btn btn-primary text-capitalize" href="{{route('zone')}}">Thêm khu vực</a>
+                </div>
+                @endif
             </div>
         </div>
     </div>
 </div>
-<!--end list of position-->
+<!--end list of desk-->
 
-<!--add position-->
+<!--add desk-->
 <div class="modal fade" id="new" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-uppercase" id="ModalLabel">Thêm chức vụ</h5>
+                <h5 class="modal-title text-uppercase" id="ModalLabel">Thêm bàn</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form class="forms-sample" id="newPositionForm" method="post" action="{{route('new-position')}}">
-                    @if(count($errors->postNewPosition_Error)>0)
-                    @foreach($errors->postNewPosition_Error->all() as $err)
+                <form class="forms-sample" id="newDeskForm" method="post" action="{{route('new-desk')}}">
+                    @if(count($errors->postNewDesk_Error)>0)
+                    @foreach($errors->postNewDesk_Error->all() as $err)
                     <div class="alert alert-fill-danger" role="alert">
                         <i class="mdi mdi-information-outline"></i>
                         {{$err}}
@@ -148,12 +154,16 @@
                     @endif
                     {{csrf_field()}}
                     <div class="form-group">
-                        <label for="posname">Tên chức vụ</label>
-                        <input type="text" class="form-control text-capitalize" id="posname" name="posname" maxlength="50" value="{{old('posname')}}">
+                        <label for="deskname">Tên Bàn</label>
+                        <input type="text" class="form-control text-capitalize" id="deskname" name="deskname" required maxlength="50" value="{{old('deskname')}}">
                     </div>
                     <div class="form-group">
-                        <label>Hệ số lương</label>
-                        <input type="number" class="form-control text-capitalize" id="coefficient" name="coefficient" value="{{old('coefficient')}}">
+                        <label>Khu vực</label>
+                        <select class="form-control form-control-lg text-capitalize" id="idzone" name="idzone" value="{{old('idzone')}}">
+                            @foreach($zones as $zone)
+                            <option value="{{$zone->idzone}}">{{$zone->zonename}}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-success btn-rounded btn-icon-text" type="submit"><i class="mdi mdi-content-save btn-icon-prepend"></i>Lưu</button>
@@ -164,24 +174,24 @@
         </div>
     </div>
 </div>
-<!--end add position-->
+<!--end add desk-->
 
-<!--edit position-->
+<!--edit desk-->
 <div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-uppercase" id="ModalLabel">Sửa chức vụ</h5>
+                <h5 class="modal-title text-uppercase" id="ModalLabel">Sửa Bàn</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form class="forms-sample" id="editPositionForm" method="post" action="{{route('edit-position')}}">
+                <form class="forms-sample" id="editDeskForm" method="post" action="{{route('edit-desk')}}">
                     {{csrf_field()}}
-                    <input type="hidden" name="idpos" id="idpos" value="{{old('idpos')}}">
-                    @if(count($errors->postEditPosition_Error)>0)
-                    @foreach($errors->postEditPosition_Error->all() as $err)
+                    <input type="hidden" name="iddesk" id="iddesk" value="{{old('iddesk')}}">
+                    @if(count($errors->postEditDesk_Error)>0)
+                    @foreach($errors->postEditDesk_Error->all() as $err)
                     <div class="alert alert-fill-danger" role="alert">
                         <i class="mdi mdi-information-outline"></i>
                         {{$err}}
@@ -189,12 +199,16 @@
                     @endforeach
                     @endif
                     <div class="form-group">
-                        <label for="posnameedit">Tên chức vụ</label>
-                        <input type="text" class="form-control text-capitalize" id="posnameedit" name="posnameedit" required maxlength="50" autofocus value="{{old('posnameedit')}}">
+                        <label for="desknameedit">Tên Bàn</label>
+                        <input type="text" class="form-control text-capitalize" id="desknameedit" name="desknameedit" required maxlength="50" autofocus value="{{old('desknameedit')}}">
                     </div>
                     <div class="form-group">
-                        <label for="coefficientedit">Hệ số lương</label>
-                        <input type="number" class="form-control text-capitalize" id="coefficientedit" name="coefficientedit" required min='0' max='20' value="{{old('coefficientedit')}}">
+                        <label>Khu vực</label>
+                        <select class="form-control form-control-lg text-capitalize" id="idzoneedit" name="idzoneedit" value="{{old('idzoneedit')}}">
+                            @foreach($zones as $zone)
+                            <option value="{{$zone->idzone}}">{{$zone->zonename}}</option>
+                            @endforeach
+                        </select>
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-success btn-rounded btn-icon-text" type="submit"><i class="mdi mdi-content-save btn-icon-prepend"></i>Lưu</button>
@@ -205,9 +219,9 @@
         </div>
     </div>
 </div>
-<!--end edit position-->
+<!--end edit desk-->
 
-<!--delete position-->
+<!--delete desk-->
 <div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -215,12 +229,12 @@
                 <div class="confirm-message">
                     <img src="{{asset('images/alert.png')}}" alt="warning icon">
                     <h3 class="text-uppercase">Xóa?</h3>
-                    <p>Bạn thực sự muốn xóa chức vụ này?</p>
-                    <p>Xin hãy đảm bảo rằng chức vụ này chưa được sử dụng.</p>
+                    <p>Bạn thực sự muốn xóa bàn này?</p>
+                    <p>Xin hãy đảm bảo rằng bàn này chưa được sử dụng.</p>
                 </div>
-                <form class="forms-sample" method="POST" action="{{route('delete-position')}}">
+                <form class="forms-sample" method="POST" action="{{route('delete-desk')}}">
                     {{csrf_field()}}
-                    <input type="hidden" name="idposdel" id="idposdel">
+                    <input type="hidden" name="iddeskdel" id="iddeskdel">
                     <div class="confirm">
                         <button type="button" class="btn btn-primary btn-rounded" data-dismiss="modal">Hủy</button>
                         <button class="btn btn-danger btn-rounded" type="submit">Xóa</button>
@@ -230,5 +244,5 @@
         </div>
     </div>
 </div>
-<!--end delete position-->
+<!--end delete desk-->
 @endsection

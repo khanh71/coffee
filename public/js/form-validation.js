@@ -121,7 +121,10 @@
           required: true
         },
         coefficient: {
-          required: true
+          required: true,
+          min: 0,
+          max: 20,
+          numner: true
         },
       },
       messages: {
@@ -130,6 +133,9 @@
         },
         coefficient: {
           required: "Vui lòng nhập hệ số lương",
+          min: "Hệ số lương phải lớn hơn 0",
+          max: "Hệ số lương phải nhỏ hơn 20",
+          number: "Hệ số lương phải là số"
         }
       },
       errorPlacement: function (label, element) {
@@ -152,7 +158,9 @@
           required: true
         },
         coefficientedit: {
-          required: true
+          required: true,
+          min: 0,
+          max: 20
         },
       },
       messages: {
@@ -161,6 +169,8 @@
         },
         coefficientedit: {
           required: "Vui lòng nhập hệ số lương",
+          min: "Hệ số lương phải lớn hơn 0",
+          max: "Hệ số lương phải nhỏ hơn 20"
         }
       },
       errorPlacement: function (label, element) {
@@ -305,7 +315,273 @@
       }
     });
 
+    $("#newZoneForm").validate({
+      rules: {
+        zonename: {
+          required: true
+        }
+      },
+      messages: {
+        zonename: {
+          required: "Vui lòng nhập tên khu vực"
+        }
+      },
+      errorPlacement: function (label, element) {
+        label.addClass('mt-2 text-danger');
+        label.insertAfter(element);
+      },
+      success: function (label, element) {
+        label.parent().removeClass('has-danger');
+        label.remove();
+      },
+      highlight: function (element, errorClass) {
+        $(element).parent().addClass('has-danger')
+        $(element).addClass('form-control-danger')
+      }
+    });
 
+    $("#editZoneForm").validate({
+      rules: {
+        zonenameedit: {
+          required: true
+        }
+      },
+      messages: {
+        zonenameedit: {
+          required: "Vui lòng nhập tên khu vực"
+        }
+      },
+      errorPlacement: function (label, element) {
+        label.addClass('mt-2 text-danger');
+        label.insertAfter(element);
+      },
+      success: function (label, element) {
+        label.parent().removeClass('has-danger');
+        label.remove();
+      },
+      highlight: function (element, errorClass) {
+        $(element).parent().addClass('has-danger')
+        $(element).addClass('form-control-danger')
+      }
+    });
+
+    $("#newDeskForm").validate({
+      rules: {
+        deskname: {
+          required: true
+        }
+      },
+      messages: {
+        deskname: {
+          required: "Vui lòng nhập tên bàn"
+        }
+      },
+      errorPlacement: function (label, element) {
+        label.addClass('mt-2 text-danger');
+        label.insertAfter(element);
+      },
+      success: function (label, element) {
+        label.parent().removeClass('has-danger');
+        label.remove();
+      },
+      highlight: function (element, errorClass) {
+        $(element).parent().addClass('has-danger')
+        $(element).addClass('form-control-danger')
+      }
+    });
+
+    $("#editDeskForm").validate({
+      rules: {
+        desknameedit: {
+          required: true
+        }
+      },
+      messages: {
+        desknameedit: {
+          required: "Vui lòng nhập tên bàn"
+        }
+      },
+      errorPlacement: function (label, element) {
+        label.addClass('mt-2 text-danger');
+        label.insertAfter(element);
+      },
+      success: function (label, element) {
+        label.parent().removeClass('has-danger');
+        label.remove();
+      },
+      highlight: function (element, errorClass) {
+        $(element).parent().addClass('has-danger')
+        $(element).addClass('form-control-danger')
+      }
+    });
+
+    $("#newVoucherForm").validate({
+      rules: {
+        vouchername: {
+          required: true
+        },
+        sale: {
+          required: true,
+          min: 0,
+          max: 100000000,
+        },
+        startday: {
+          required: true
+        },
+        endday: {
+          required: true
+        }
+      },
+      messages: {
+        vouchername: {
+          required: "Vui lòng nhập tên khuyến mãi"
+        },
+        sale: {
+          required: "Vui lòng nhập giảm giá",
+          min: "Giảm giá phải lớn hơn 0",
+          max: "Giảm giá phải nhỏ hơn 100.000.000",
+        },
+        startday: {
+          required: "Vui lòng nhập ngày bắt đầu"
+        },
+        endday: {
+          required: "Vui lòng nhập ngày kết thúc"
+        }
+      },
+      errorPlacement: function (label, element) {
+        label.addClass('mt-2 text-danger');
+        label.insertAfter(element);
+      },
+      success: function (label, element) {
+        label.parent().removeClass('has-danger');
+        label.remove();
+      },
+      highlight: function (element, errorClass) {
+        $(element).parent().addClass('has-danger')
+        $(element).addClass('form-control-danger')
+      }
+    });
+
+    $("#editVoucherForm").validate({
+      rules: {
+        vouchernameedit: {
+          required: true
+        },
+        saleedit: {
+          required: true,
+          min: 0,
+          max: 100000000,
+        },
+        startdayedit: {
+          required: true
+        },
+        enddayedit: {
+          required: true
+        }
+      },
+      messages: {
+        vouchernameedit: {
+          required: "Vui lòng nhập tên khuyến mãi"
+        },
+        sale: {
+          requirededit: "Vui lòng nhập giảm giá",
+          min: "Giảm giá phải lớn hơn 0",
+          max: "Giảm giá phải nhỏ hơn 100.000.000",
+        },
+        startdayedit: {
+          required: "Vui lòng nhập ngày bắt đầu"
+        },
+        enddayedit: {
+          required: "Vui lòng nhập ngày kết thúc"
+        }
+      },
+      errorPlacement: function (label, element) {
+        label.addClass('mt-2 text-danger');
+        label.insertAfter(element);
+      },
+      success: function (label, element) {
+        label.parent().removeClass('has-danger');
+        label.remove();
+      },
+      highlight: function (element, errorClass) {
+        $(element).parent().addClass('has-danger')
+        $(element).addClass('form-control-danger')
+      }
+    });
+
+    $("#newSupplierForm").validate({
+      rules: {
+        suppname: {
+          required: true
+        },
+        suppaddress: {
+          required: true
+        },
+        suppphone: {
+          required: true
+        }
+      },
+      messages: {
+        suppname: {
+          required: "Vui lòng nhập tên nhà cung cấp"
+        },
+        suppaddress: {
+          required: "Vui lòng nhập địa chỉ"
+        },
+        suppphone: {
+          required: "Vui lòng nhập số điện thoại"
+        }
+      },
+      errorPlacement: function (label, element) {
+        label.addClass('mt-2 text-danger');
+        label.insertAfter(element);
+      },
+      success: function (label, element) {
+        label.parent().removeClass('has-danger');
+        label.remove();
+      },
+      highlight: function (element, errorClass) {
+        $(element).parent().addClass('has-danger')
+        $(element).addClass('form-control-danger')
+      }
+    });
+
+    $("#editSupplierForm").validate({
+      rules: {
+        suppnameedit: {
+          required: true
+        },
+        suppaddressedit: {
+          required: true
+        },
+        suppphoneedit: {
+          required: true
+        }
+      },
+      messages: {
+        suppnameedit: {
+          required: "Vui lòng nhập tên nhà cung cấp"
+        },
+        suppaddressedit: {
+          required: "Vui lòng nhập địa chỉ"
+        },
+        suppphoneedit: {
+          required: "Vui lòng nhập số điện thoại"
+        }
+      },
+      errorPlacement: function (label, element) {
+        label.addClass('mt-2 text-danger');
+        label.insertAfter(element);
+      },
+      success: function (label, element) {
+        label.parent().removeClass('has-danger');
+        label.remove();
+      },
+      highlight: function (element, errorClass) {
+        $(element).parent().addClass('has-danger')
+        $(element).addClass('form-control-danger')
+      }
+    });
 
 
 

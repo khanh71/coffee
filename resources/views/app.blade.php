@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="{{asset('css/style.css')}}">
     @yield('css')
     <!-- endinject -->
-    <link rel="shortcut icon" href="{{asset('images/favicon.png')}}" />
+    <link rel="shortcut icon" href="{{asset('images/favicon.svg')}}" />
 </head>
 
 <body class="sidebar-icon-only navbar-fixed-top">
@@ -25,14 +25,8 @@
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
             <ul class="nav">
                 <li class="nav-item sidebar-category">
-                    <p>Navigation</p>
+                    <p>Quản Lý</p>
                     <span></span>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{route('/')}}">
-                        <i class="mdi mdi-view-quilt menu-icon"></i>
-                        <span class="menu-title">Trang Chủ</span>
-                    </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('employee')}}">
@@ -42,12 +36,36 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('position')}}">
-                        <i class="mdi mdi-briefcase-outline menu-icon"></i>
+                        <i class="mdi mdi-briefcase menu-icon"></i>
                         <span class="menu-title">Quản Lý Chức Vụ</span>
                     </a>
                 </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('zone')}}">
+                        <i class="mdi mdi-nature-people menu-icon"></i>
+                        <span class="menu-title">Quản Lý Khu Vực</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('desk')}}">
+                        <i class="mdi mdi-sofa menu-icon"></i>
+                        <span class="menu-title">Quản Lý Bàn</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('voucher')}}">
+                        <i class="mdi mdi-sale menu-icon"></i>
+                        <span class="menu-title">Quản Lý Khuyến Mãi</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('supplier')}}">
+                        <i class="mdi mdi-truck menu-icon"></i>
+                        <span class="menu-title">Quản Lý Nhà Cung Cấp</span>
+                    </a>
+                </li>
                 <li class="nav-item sidebar-category">
-                    <p>Components</p>
+                    <p>Bán Hàng</p>
                     <span></span>
                 </li>
                 <li class="nav-item">
@@ -61,6 +79,10 @@
                             <li class="nav-item"> <a class="nav-link" href="pages/ui-features/dragula.html">Dragula</a></li>
                         </ul>
                     </div>
+                </li>
+                <li class="nav-item sidebar-category">
+                    <p>Báo Cáo</p>
+                    <span></span>
                 </li>
             </ul>
         </nav>
@@ -176,7 +198,7 @@
                         </li>
                         <li class="nav-item nav-profile dropdown">
                             <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
-                                <img src="{{asset('images/faces/face5.jpg')}}" alt="profile" />
+                                <i class="mdi mdi-account-circle icon-lg"></i>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
                                 <a class="dropdown-item">

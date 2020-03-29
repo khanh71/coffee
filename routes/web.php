@@ -31,4 +31,28 @@ Route::group(['middleware' => 'CheckLogin'], function () {
     Route::post('new-position', 'Controller@postNewPosition')->name('new-position');
     Route::post('edit-position', 'Controller@postEditPosition')->name('edit-position');
     Route::post('delete-position', 'Controller@postDeletePosition')->name('delete-position');
+
+    Route::get('zone', 'Controller@getZone')->name('zone');
+    Route::post('zone', 'Controller@getZone')->name('zone');
+    Route::post('new-zone', 'Controller@postNewZone')->name('new-zone');
+    Route::post('edit-zone', 'Controller@postEditZone')->name('edit-zone');
+    Route::post('delete-zone', 'Controller@postDeleteZone')->name('delete-zone');
+
+    Route::get('desk', 'Controller@getDesk')->name('desk');
+    Route::post('desk', 'Controller@getDesk')->name('desk');
+    Route::post('new-desk', 'Controller@postNewDesk')->name('new-desk');
+    Route::post('edit-desk', 'Controller@postEditDesk')->name('edit-desk');
+    Route::post('delete-desk', 'Controller@postDeleteDesk')->name('delete-desk');
+
+    Route::get('voucher', 'Controller@getVoucher')->name('voucher');
+    Route::post('voucher', 'Controller@getVoucher')->name('voucher');
+    Route::post('new-voucher', 'Controller@postNewVoucher')->name('new-voucher');
+    Route::post('edit-voucher', 'Controller@postEditVoucher')->name('edit-voucher');
+    Route::post('delete-voucher', 'Controller@postDeleteVoucher')->name('delete-voucher');
+
+    Route::get('supplier', 'Controller@getSupplier')->name('supplier');
+    Route::post('supplier', 'Controller@getSupplier')->name('supplier');
+    Route::post('new-supplier', 'Controller@postNewSupplier')->name('new-supplier');
+    Route::post('edit-supplier', 'Controller@postEditSupplier')->name('edit-supplier');
+    Route::post('delete-supplier', 'Controller@postDeleteSupplier')->name('delete-supplier');
 });

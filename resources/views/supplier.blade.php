@@ -1,5 +1,5 @@
 @extends('app')
-@section('title','Quản lý chức vụ')
+@section('title','Quản lý Nhà cung cấp')
 @section('css')
 <link rel="stylesheet" href="{{asset('vendors/datatables.net-bs4/dataTables.bootstrap4.css')}}">
 <link rel="stylesheet" href="{{asset('vendors/jquery-toast-plugin/jquery.toast.min.css')}}">
@@ -17,6 +17,9 @@
 <script src="{{asset('js/form-validation.js')}}"></script>
 <script src="{{asset('vendors/bootstrap-maxlength/bootstrap-maxlength.min.js')}}"></script>
 <script src="{{asset('js/bt-maxLength.js')}}"></script>
+<script src="{{asset('vendors/inputmask/jquery.inputmask.bundle.js')}}"></script>
+<script src="{{asset('vendors/inputmask/inputmask.binding.js')}}"></script>
+<script src="{{asset('vendors/inputmask/phone-vn.js')}}"></script>
 @if(count($errors)>0 || Session::has('err')) <script>
     showDangerToast();
 </script> @endif
@@ -26,7 +29,7 @@
 @if(Session::has('succ')) <script>
     swal({
         title: "Thành công",
-        text: "Xóa chức vụ thành công",
+        text: "Xóa nhà cung cấp thành công",
         icon: "success"
     });
 </script> @endif
@@ -34,53 +37,55 @@
 @if(Session::has('error')) <script>
     swal({
         title: "Lỗi",
-        text: "Chức vụ này đã được sử dụng, không thể xóa",
+        text: "Nhà cung cấp này đã được sử dụng, không thể xóa",
         icon: "error"
     });
 </script> @endif
 <script type="text/javascript">
-    @if(count($errors -> postNewPosition_Error) > 0)
+    @if(count($errors -> postNewSupplier_Error) > 0)
     $('#new').modal('show');
     @endif
-    @if(count($errors -> postEditPosition_Error) > 0)
+    @if(count($errors -> postEditSupplier_Error) > 0)
     $('#edit').modal('show');
     @endif
 
     $("#new").on('shown.bs.modal', function() {
-        $(this).find('#posname').focus();
+        $(this).find('#suppname').focus();
     });
     $('#edit').on('show.bs.modal', function(event) {
         var button = $(event.relatedTarget);
-        var idpos = button.data('idpos');
-        var posname = button.data('posname');
-        var coefficient = button.data('coefficient');
+        var idsupp = button.data('idsupp');
+        var suppname = button.data('suppname');
+        var suppaddress = button.data('suppaddress');
+        var suppphone = button.data('suppphone');
         var model = $(this);
-        model.find('#idpos').val(idpos);
-        model.find('#posnameedit').val(posname);
-        model.find('#coefficientedit').val(coefficient);
+        model.find('#idsupp').val(idsupp);
+        model.find('#suppnameedit').val(suppname);
+        model.find('#suppaddressedit').val(suppaddress);
+        model.find('#suppphoneedit').val(suppphone);
     })
 
     $('#delete').on('show.bs.modal', function(event) {
         var button = $(event.relatedTarget);
-        var idpos = button.data('idpos');
+        var idsupp = button.data('idsupp');
         var model = $(this);
-        model.find('#idposdel').val(idpos);
+        model.find('#idsuppdel').val(idsupp);
     })
 </script>
 @endsection
 
 @section('content')
-<!--list of position-->
+<!--list of supplier-->
 <div class="card">
     <div class="card-body">
-        <div class="card-title text-left">Quản lý Chức vụ</div>
+        <div class="card-title text-left">Quản lý Nhà cung cấp</div>
         <div class="row">
             <div class="col-12">
                 <div class="row">
-                    <form action="{{route('position')}}" method="post" class="col-md-9">
+                    <form action="{{route('supplier')}}" method="post" class="col-md-9">
                         {{csrf_field()}}
                         <div class="form-group input-group">
-                            <input name="search" type="text" class="form-control text-capitalize" placeholder="Nhập chức vụ bạn cần tìm vào đây nhé..." value="{{$search}}" autofocus>
+                            <input name="search" type="text" class="form-control text-capitalize" placeholder="Nhập nhà cung cấp bạn cần tìm vào đây nhé..." value="{{$search}}" autofocus>
                             <span class="input-group-append">
                                 <button type="submit" class="btn btn-icon-text btn-primary"><i class="mdi mdi-magnify btn-icon-prepend"></i>Tìm Kiếm</button>
                             </span>
@@ -93,28 +98,30 @@
                         <thead>
                             <tr>
                                 <th>STT</th>
-                                <th>Tên chức vụ</th>
-                                <th>Hệ số lương</th>
+                                <th>Tên nhà cung cấp</th>
+                                <th>Địa chỉ</th>
+                                <th>Điện thoại</th>
                                 <th>Sửa</th>
                                 <th>Xóa</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($positions as $key=>$pos)
-                            <tr id="{{$pos->idpos}}">
+                            @forelse($suppliers as $key=>$supplier)
+                            <tr id="{{$supplier->idsupplier}}">
                                 <td>{{$key+1}}</td>
-                                <td>{{$pos->posname}}</td>
-                                <td>{{$pos->coefficient}}</td>
+                                <td>{{$supplier->suppname}}</td>
+                                <td>{{$supplier->suppaddress}}</td>
+                                <td>{{$supplier->suppphone}}</td>
                                 <td>
-                                    <button class="btn btn-info btn-rounded btn-icon" data-idpos="{{$pos->idpos}}" data-posname="{{$pos->posname}}" data-coefficient="{{$pos->coefficient}}" data-toggle="modal" data-target="#edit"><i class="mdi mdi-pencil"></i></button>
+                                    <button class="btn btn-info btn-rounded btn-icon" data-idsupp="{{$supplier->idsupp}}" data-suppname="{{$supplier->suppname}}" data-suppaddress="{{$supplier->suppaddress}}" data-suppphone="{{$supplier->suppphone}}" data-toggle="modal" data-target="#edit"><i class="mdi mdi-pencil"></i></button>
                                 </td>
                                 <td>
-                                    <button class="btn btn-icon btn-rounded btn-danger" data-idpos="{{$pos->idpos}}" data-toggle="modal" data-target="#delete"><i class="mdi mdi-delete-forever"></i></button>
+                                    <button class="btn btn-icon btn-rounded btn-danger" data-idsupp="{{$supplier->idsupp}}" data-toggle="modal" data-target="#delete"><i class="mdi mdi-delete-forever"></i></button>
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" class="text-center">Không có dữ liệu</td>
+                                <td colspan="6" class="text-center">Không có dữ liệu</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -124,22 +131,22 @@
         </div>
     </div>
 </div>
-<!--end list of position-->
+<!--end list of supplier-->
 
-<!--add position-->
+<!--add supplier-->
 <div class="modal fade" id="new" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-uppercase" id="ModalLabel">Thêm chức vụ</h5>
+                <h5 class="modal-title text-uppercase" id="ModalLabel">Thêm nhà cung cấp</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form class="forms-sample" id="newPositionForm" method="post" action="{{route('new-position')}}">
-                    @if(count($errors->postNewPosition_Error)>0)
-                    @foreach($errors->postNewPosition_Error->all() as $err)
+                <form class="forms-sample" id="newSupplierForm" method="post" action="{{route('new-supplier')}}">
+                    @if(count($errors->postNewSupplier_Error)>0)
+                    @foreach($errors->postNewSupplier_Error->all() as $err)
                     <div class="alert alert-fill-danger" role="alert">
                         <i class="mdi mdi-information-outline"></i>
                         {{$err}}
@@ -148,12 +155,16 @@
                     @endif
                     {{csrf_field()}}
                     <div class="form-group">
-                        <label for="posname">Tên chức vụ</label>
-                        <input type="text" class="form-control text-capitalize" id="posname" name="posname" maxlength="50" value="{{old('posname')}}">
+                        <label>Tên nhà cung cấp</label>
+                        <input type="text" class="form-control text-capitalize" id="suppname" name="suppname" required maxlength="50" value="{{old('suppname')}}">
                     </div>
                     <div class="form-group">
-                        <label>Hệ số lương</label>
-                        <input type="number" class="form-control text-capitalize" id="coefficient" name="coefficient" value="{{old('coefficient')}}">
+                        <label>Địa chỉ</label>
+                        <input type="text" class="form-control text-capitalize" id="suppaddress" name="suppaddress" required maxlength="100" value="{{old('suppaddress')}}">
+                    </div>
+                    <div class="form-group">
+                        <label>Số điện thoại</label>
+                        <input type="text" class="form-control form-control-lg" id="suppphone" name="suppphone" data-inputmask="'alias': 'phonevn'" required value="{{old('suppphone')}}">
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-success btn-rounded btn-icon-text" type="submit"><i class="mdi mdi-content-save btn-icon-prepend"></i>Lưu</button>
@@ -164,24 +175,24 @@
         </div>
     </div>
 </div>
-<!--end add position-->
+<!--end add supplier-->
 
-<!--edit position-->
+<!--edit supplier-->
 <div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-uppercase" id="ModalLabel">Sửa chức vụ</h5>
+                <h5 class="modal-title text-uppercase" id="ModalLabel">Sửa nhà cung cấp</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form class="forms-sample" id="editPositionForm" method="post" action="{{route('edit-position')}}">
+                <form class="forms-sample" id="editSupplierForm" method="post" action="{{route('edit-supplier')}}">
                     {{csrf_field()}}
-                    <input type="hidden" name="idpos" id="idpos" value="{{old('idpos')}}">
-                    @if(count($errors->postEditPosition_Error)>0)
-                    @foreach($errors->postEditPosition_Error->all() as $err)
+                    <input type="hidden" name="idsupp" id="idsupp" value="{{old('idsupp')}}">
+                    @if(count($errors->postEditSupplier_Error)>0)
+                    @foreach($errors->postEditSupplier_Error->all() as $err)
                     <div class="alert alert-fill-danger" role="alert">
                         <i class="mdi mdi-information-outline"></i>
                         {{$err}}
@@ -189,12 +200,16 @@
                     @endforeach
                     @endif
                     <div class="form-group">
-                        <label for="posnameedit">Tên chức vụ</label>
-                        <input type="text" class="form-control text-capitalize" id="posnameedit" name="posnameedit" required maxlength="50" autofocus value="{{old('posnameedit')}}">
+                        <label for="suppnameedit">Tên nhà cung cấp</label>
+                        <input type="text" class="form-control text-capitalize" id="suppnameedit" name="suppnameedit" required maxlength="100" autofocus value="{{old('suppnameedit')}}">
                     </div>
                     <div class="form-group">
-                        <label for="coefficientedit">Hệ số lương</label>
-                        <input type="number" class="form-control text-capitalize" id="coefficientedit" name="coefficientedit" required min='0' max='20' value="{{old('coefficientedit')}}">
+                        <label>Địa chỉ</label>
+                        <input type="text" class="form-control text-capitalize" id="suppaddressedit" name="suppaddressedit" required maxlength="100" value="{{old('suppaddressedit')}}">
+                    </div>
+                    <div class="form-group">
+                        <label>Số điện thoại</label>
+                        <input type="text" class="form-control form-control-lg" id="suppphoneedit" name="suppphoneedit" data-inputmask="'alias': 'phonevn'" required value="{{old('suppphoneedit')}}">
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-success btn-rounded btn-icon-text" type="submit"><i class="mdi mdi-content-save btn-icon-prepend"></i>Lưu</button>
@@ -205,9 +220,9 @@
         </div>
     </div>
 </div>
-<!--end edit position-->
+<!--end edit supplier-->
 
-<!--delete position-->
+<!--delete supplier-->
 <div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -215,12 +230,12 @@
                 <div class="confirm-message">
                     <img src="{{asset('images/alert.png')}}" alt="warning icon">
                     <h3 class="text-uppercase">Xóa?</h3>
-                    <p>Bạn thực sự muốn xóa chức vụ này?</p>
-                    <p>Xin hãy đảm bảo rằng chức vụ này chưa được sử dụng.</p>
+                    <p>Bạn thực sự muốn xóa nhà cung cấp này?</p>
+                    <p>Xin hãy đảm bảo rằng nhà cung cấp này chưa được sử dụng.</p>
                 </div>
-                <form class="forms-sample" method="POST" action="{{route('delete-position')}}">
+                <form class="forms-sample" method="POST" action="{{route('delete-supplier')}}">
                     {{csrf_field()}}
-                    <input type="hidden" name="idposdel" id="idposdel">
+                    <input type="hidden" name="idsuppdel" id="idsuppdel">
                     <div class="confirm">
                         <button type="button" class="btn btn-primary btn-rounded" data-dismiss="modal">Hủy</button>
                         <button class="btn btn-danger btn-rounded" type="submit">Xóa</button>
@@ -230,5 +245,5 @@
         </div>
     </div>
 </div>
-<!--end delete position-->
+<!--end delete supplier-->
 @endsection

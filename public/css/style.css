@@ -12898,7 +12898,7 @@ input[type="button"].btn-block {
 .asColorPicker-wrap>.custom-file {
     position: relative;
     flex: 1 1 auto;
-    width: 1%;
+    width: 80%;
     margin-bottom: 0;
 }
 
@@ -13678,7 +13678,7 @@ input[type="button"].btn-block {
     text-align: center;
     white-space: nowrap;
     background-color: #e9ecef;
-    border: 1px solid #ced4da;
+    border: 0;
     border-radius: 2px;
 }
 
@@ -28455,7 +28455,7 @@ body.avgrund-active {
 
 .datepicker.input-group,
 .datepicker.asColorPicker-wrap {
-    border: 1px solid #f3f3f3;
+    /* border: 1px solid #dddddd; */
     padding: 0;
 }
 
@@ -28493,7 +28493,8 @@ body.avgrund-active {
 .datepicker.asColorPicker-wrap .tt-query,
 .datepicker.input-group .tt-hint,
 .datepicker.asColorPicker-wrap .tt-hint {
-    border: none;
+    border: 1px solid #dddddd;
+    width: 80%;
 }
 
 .datepicker-dropdown:after {
@@ -30790,9 +30791,9 @@ div.tagsinput span.tag a {
 }
 
 .sidebar .nav .nav-item .nav-link i.menu-icon {
-    font-size: 1.125rem;
+    font-size: 1.25rem;
     line-height: 1;
-    margin-right: 1.125rem;
+    margin-right: 1rem;
     color: #ffffff;
 }
 
@@ -30837,7 +30838,7 @@ div.tagsinput span.tag a {
 .sidebar .nav .nav-item .nav-link .menu-title {
     color: inherit;
     display: inline-block;
-    font-size: 0.937rem;
+    font-size: 0.837rem;
     line-height: 1;
     vertical-align: middle;
     font-weight: bold;
@@ -30868,7 +30869,7 @@ div.tagsinput span.tag a {
 .sidebar .nav .nav-item.active>.nav-link i,
 .sidebar .nav .nav-item.active>.nav-link .menu-title,
 .sidebar .nav .nav-item.active>.nav-link .menu-arrow {
-    color: #ffffff;
+    color: #ffff00;
 }
 
 .sidebar .nav .nav-item.active>.nav-link i.menu-arrow::before {
@@ -31474,7 +31475,7 @@ div.tagsinput span.tag a {
 .navbar .navbar-menu-wrapper .navbar-nav.navbar-nav-right .nav-item.nav-profile .nav-link img {
     width: 2.187rem;
     height: 2.187rem;
-    border-radius: 0.2rem 0.75rem;
+    border-radius: 50px;
     box-shadow: 0 0 5px #0ff;
 }
 
@@ -31950,7 +31951,7 @@ div.tagsinput span.tag a {
         width: 5px;
         height: 5px;
         display: block;
-        background: #ffffff;
+        background: #ffff00;
         border-radius: 100%;
     }
     .sidebar-light.sidebar-icon-only .sidebar .nav .sidebar-category span {

@@ -132,7 +132,7 @@
                                 <td>{{$emp->posname}}</td>
                                 <td>{{number_format($emp->basesalary)}}</td>
                                 <td>
-                                    <button class="btn btn-info btn-rounded btn-icon" data-toggle="modal" data-iduser="{{$emp->id}}" data-name="{{$emp->name}}" data-address="{{$emp->address}}" data-birthday="{{$emp->birthday}}" data-phone="{{$emp->phone}}" data-startday="{{$emp->startday}}" data-idposition="{{$emp->idposition}}" data-basesalary="{{$emp->basesalary}}" data-target="#edit"><i class="mdi mdi-pencil"></i></button>
+                                    <button class="btn btn-info btn-rounded btn-icon" data-toggle="modal" data-iduser="{{$emp->id}}" data-name="{{$emp->name}}" data-address="{{$emp->address}}" data-birthday="{{$emp->birthday}}" data-phone="{{$emp->phone}}" data-startday="{{$emp->startday}}" data-idposition="{{$emp->posid}}" data-basesalary="{{$emp->basesalary}}" data-target="#edit"><i class="mdi mdi-pencil"></i></button>
                                 </td>
                                 <td>
                                     <button class="btn btn-icon btn-rounded btn-danger" data-toggle="modal" data-iduser="{{$emp->id}}" data-target="#delete"><i class="mdi mdi-delete-forever"></i></button>
@@ -140,7 +140,7 @@
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="10">Không có dữ liệu</td>
+                                <td colspan="10" class="text-center">Không có dữ liệu</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -246,7 +246,7 @@
                     @endforeach
                     @endif
                     {{csrf_field()}}
-                    <input type="hidden" name="iduser" id="iduser" value="">
+                    <input type="hidden" name="iduser" id="iduser" value="{{old('iduser')}}">
                     <div class="form-group">
                         <label>Họ tên</label>
                         <input type="text" class="form-control form-control-lg text-capitalize" id="nameedit" name="nameedit" maxLength='50' required value="{{old('nameedit')}}">
