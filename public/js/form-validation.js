@@ -583,9 +583,211 @@
       }
     });
 
+    $("#newWorkdayForm").validate({
+      rules: {
+        hour: {
+          required: true
+        },
+        wddate: {
+          required: true
+        }
+      },
+      messages: {
+        hour: {
+          required: "Vui lòng nhập số giờ làm"
+        },
+        wddate: {
+          required: "Vui lòng nhập ngày chấm công"
+        }
+      },
+      errorPlacement: function (label, element) {
+        label.addClass('mt-2 text-danger');
+        label.insertAfter(element);
+      },
+      success: function (label, element) {
+        label.parent().removeClass('has-danger');
+        label.remove();
+      },
+      highlight: function (element, errorClass) {
+        $(element).parent().addClass('has-danger')
+        $(element).addClass('form-control-danger')
+      }
+    });
 
+    $("#editWorkdayForm").validate({
+      rules: {
+        houredit: {
+          required: true
+        },
+        wddateedit: {
+          required: true
+        }
+      },
+      messages: {
+        houredit: {
+          required: "Vui lòng nhập số giờ làm"
+        },
+        wddateedit: {
+          required: "Vui lòng nhập ngày chấm công"
+        }
+      },
+      errorPlacement: function (label, element) {
+        label.addClass('mt-2 text-danger');
+        label.insertAfter(element);
+      },
+      success: function (label, element) {
+        label.parent().removeClass('has-danger');
+        label.remove();
+      },
+      highlight: function (element, errorClass) {
+        $(element).parent().addClass('has-danger')
+        $(element).addClass('form-control-danger')
+      }
+    });
 
+    $("#newCateForm").validate({
+      rules: {
+        procatename: {
+          required: true
+        }
+      },
+      messages: {
+        procatename: {
+          required: "Vui lòng nhập tên danh mục"
+        }
+      },
+      errorPlacement: function (label, element) {
+        label.addClass('mt-2 text-danger');
+        label.insertAfter(element);
+      },
+      success: function (label, element) {
+        label.parent().removeClass('has-danger');
+        label.remove();
+      },
+      highlight: function (element, errorClass) {
+        $(element).parent().addClass('has-danger')
+        $(element).addClass('form-control-danger')
+      }
+    });
 
+    $("#editCateForm").validate({
+      rules: {
+        procatenameedit: {
+          required: true
+        }
+      },
+      messages: {
+        procatenameedit: {
+          required: "Vui lòng nhập tên danh mục"
+        }
+      },
+      errorPlacement: function (label, element) {
+        label.addClass('mt-2 text-danger');
+        label.insertAfter(element);
+      },
+      success: function (label, element) {
+        label.parent().removeClass('has-danger');
+        label.remove();
+      },
+      highlight: function (element, errorClass) {
+        $(element).parent().addClass('has-danger')
+        $(element).addClass('form-control-danger')
+      }
+    });
+
+    $("#newMaterialForm").validate({
+      rules: {
+        maname: {
+          required: true
+        },
+        maprice: {
+          min: 0,
+          max: 100000000,
+          number: true
+        },
+        unit: {
+          required: true
+        }
+      },
+      messages: {
+        maname: {
+          required: "Vui lòng nhập tên nguyên liệu"
+        },
+        maprice: {
+          min: "Giá nhập phải lớn hơn 0",
+          max: "Giá nhập phải nhỏ hơn 100.000.000",
+          number: "Giá nhập phải là số"
+        },
+        unit: {
+          required: "Vui lòng nhập đơn vị tính"
+        }
+      },
+      errorPlacement: function (label, element) {
+        label.addClass('mt-2 text-danger');
+        label.insertAfter(element);
+      },
+      success: function (label, element) {
+        label.parent().removeClass('has-danger');
+        label.remove();
+      },
+      highlight: function (element, errorClass) {
+        $(element).parent().addClass('has-danger')
+        $(element).addClass('form-control-danger')
+      }
+    });
+
+    $("#editMaterialForm").validate({
+      rules: {
+        manameedit: {
+          required: true
+        },
+        mapriceedit: {
+          min: 0,
+          max: 100000000,
+          number: true
+        },
+        maamountedit: {
+          required: true,
+          min: 0,
+          max: 100000000,
+          number: true
+        },
+        unitedit: {
+          required: true
+        }
+      },
+      messages: {
+        manameedit: {
+          required: "Vui lòng nhập tên nguyên liệu"
+        },
+        mapriceedit: {
+          min: "Giá nhập phải lớn hơn 0",
+          max: "Giá nhập phải nhỏ hơn 100.000.000",
+          number: "Giá nhập phải là số"
+        },
+        maamountedit: {
+          required: "Vui lòng nhập số lượng tồn",
+          min: "Số lượng tồn phải lớn hơn 0",
+          max: "Số lượng tồn phải nhỏ hơn 100.000.000",
+          number: "Số lượng tồn phải là số"
+        },
+        unitedit: {
+          required: "Vui lòng nhập đơn vị tính"
+        }
+      },
+      errorPlacement: function (label, element) {
+        label.addClass('mt-2 text-danger');
+        label.insertAfter(element);
+      },
+      success: function (label, element) {
+        label.parent().removeClass('has-danger');
+        label.remove();
+      },
+      highlight: function (element, errorClass) {
+        $(element).parent().addClass('has-danger')
+        $(element).addClass('form-control-danger')
+      }
+    });
 
 
 

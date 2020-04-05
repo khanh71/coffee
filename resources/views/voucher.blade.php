@@ -84,8 +84,8 @@
             model.find('#syledit').text('%');
         else
             model.find('#syledit').text('₫');
-        model.find('#datepicker-popup-startday-edit').datepicker('update', startday);
-        model.find('#datepicker-popup-endday-edit').datepicker('update', endday)
+        model.find('#datepicker-popup-startday-edit').datepicker('update', new Date(startday));
+        model.find('#datepicker-popup-endday-edit').datepicker('update', new Date(endday))
     })
 
     $("#datepicker-popup-startday-edit").datepicker().on('show.bs.modal', function(event) {
@@ -109,11 +109,11 @@
 <!--list of voucher-->
 <div class="card">
     <div class="card-body">
-        <div class="card-title text-left">Quản lý khuyến mãi</div>
+        <div class="card-title ribbon ribbon-primary"><div class="glow"></div>Quản lý khuyến mãi</div>
         <div class="row">
             <div class="col-12">
                 <div class="row">
-                    <form action="{{route('voucher')}}" method="post" class="col-md-9">
+                    <form action="{{route('voucher')}}" method="post" class="col-md-11">
                         {{csrf_field()}}
                         <div class="form-group input-group">
                             <input name="search" type="text" class="form-control text-capitalize" placeholder="Nhập khuyến mãi bạn cần tìm vào đây nhé..." value="{{$search}}" autofocus>
@@ -122,7 +122,7 @@
                             </span>
                         </div>
                     </form>
-                    <div class="col-md-3 text-right"><button class="btn btn-success btn-icon-text btn-rounded" data-toggle="modal" data-target="#new"><i class="mdi mdi-plus btn-icon-prepend"></i>Thêm</button></div>
+                    <div class="col-md-1 text-right"><button class="btn btn-success btn-icon btn-rounded" data-toggle="modal" data-target="#new"><i class="mdi mdi-plus"></i></button></div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover">
@@ -139,11 +139,11 @@
                         </thead>
                         <tbody>
                             @forelse($vouchers as $key=>$voucher)
-                            <tr id="{{$voucher->idvoucher}}">
+                            <tr @if(Carbon\Carbon::today()->between($voucher->startday,$voucher->endday)) class="text-success" @endif>
                                 <td>{{$key+1}}</td>
                                 <td>{{$voucher->vouchername}}</td>
-                                <td>@if($voucher->sale<=100) {{$voucher->sale.'%'}} @else {{number_format($voucher->sale).'₫'}} @endif</td> <td>{{$voucher->startday}}</td>
-                                <td>{{$voucher->endday}}</td>
+                                <td>@if($voucher->sale<=100) {{$voucher->sale.'%'}} @else {{number_format($voucher->sale).'₫'}} @endif</td> <td>{{date('d/m/Y',strtotime($voucher->startday))}}</td>
+                                <td>{{date('d/m/Y',strtotime($voucher->endday))}}</td>
                                 <td>
                                     <button class="btn btn-info btn-rounded btn-icon" data-idvoucher="{{$voucher->idvoucher}}" data-vouchername="{{$voucher->vouchername}}" data-sale="{{$voucher->sale}}" data-startday="{{$voucher->startday}}" data-endday="{{$voucher->endday}}" data-toggle="modal" data-target="#edit"><i class="mdi mdi-pencil"></i></button>
                                 </td>

@@ -71,12 +71,12 @@
 <!--list of desk-->
 <div class="card">
     <div class="card-body">
-        <div class="card-title text-left">Quản lý Bàn</div>
+        <div class="card-title ribbon ribbon-primary"><div class="glow"></div>Quản lý Bàn</div>
         <div class="row">
             <div class="col-12">
                 @if($zones->count()>0)
                 <div class="row">
-                    <form action="{{route('desk')}}" method="post" class="col-md-9">
+                    <form action="{{route('desk')}}" method="post" class="col-md-11">
                         {{csrf_field()}}
                         <div class="form-group input-group">
                             <input name="search" type="text" class="form-control text-capitalize" placeholder="Nhập bàn bạn cần tìm vào đây nhé..." value="{{$search}}" autofocus>
@@ -85,7 +85,7 @@
                             </span>
                         </div>
                     </form>
-                    <div class="col-md-3 text-right"><button class="btn btn-success btn-icon-text btn-rounded" data-toggle="modal" data-target="#new"><i class="mdi mdi-plus btn-icon-prepend"></i>Thêm</button></div>
+                    <div class="col-md-1 text-right"><button class="btn btn-success btn-icon btn-rounded" data-toggle="modal" data-target="#new"><i class="mdi mdi-plus"></i></button></div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover">

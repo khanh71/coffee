@@ -2,8 +2,13 @@
 
 namespace App\Http\Controllers;
 
+use App\Bill;
+use App\BillDetail;
 use App\Desk;
+use App\Formula;
 use App\Import;
+use App\ImportDetail;
+use App\Material;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -13,9 +18,12 @@ use Illuminate\Support\Facades\Auth;
 use App\User;
 use App\Shop;
 use App\Position;
+use App\Product;
+use App\ProductCate;
 use App\Supplier;
 use App\Zone;
 use App\Voucher;
+use App\Workday;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
@@ -101,11 +109,11 @@ class Controller extends BaseController
             $user->startday = Carbon::now()->format('d/m/Y');
             $user->basesalary = 0;
             $user->posid = 1;
-            $user->shopid = Shop::latest('shopid')->first()->shopid;
+            $user->shopid = $shop->idshop;
             $user->save();
 
             return view('login')->with('message', 'Tạo tài khoản thành công!!');
-        } catch (Exception $e) {
+        } catch (\Throwable $th) {
             return redirect()->view('register')->withInput();
         }
     }
@@ -128,7 +136,9 @@ class Controller extends BaseController
         $validator = Validator::make(
             $req->all(),
             [
-                'posname' => 'required|max:50|unique:position',
+                'posname' => ['required', 'max:50', Rule::unique('position')->where(function ($query) {
+                    return $query->where('shopid', Auth::user()->shopid);
+                })],
                 'coefficient' => 'required|numeric|min:0|max:20'
             ],
             [
@@ -162,7 +172,9 @@ class Controller extends BaseController
         $validator = Validator::make(
             $req->all(),
             [
-                'posnameedit' => ['required', 'max:50', Rule::unique('position', 'posname')->ignore($req->idpos, 'idpos')],
+                'posnameedit' => ['required', 'max:50', Rule::unique('position', 'posname')->where(function ($query) {
+                    return $query->where('shopid', Auth::user()->shopid);
+                })->ignore($req->idpos, 'idpos')],
                 'coefficientedit' => 'required|numeric|min:0|max:20'
             ],
             [
@@ -329,7 +341,8 @@ class Controller extends BaseController
     public function postDeleteEmployee(Request $req)
     {
         $user = User::where('id', $req->iduserdel)->first();
-        if ($user->count() > 0) {
+        $imp = Import::where('userid', $user->id)->first();
+        if ($imp->count() > 0) {
             $user->delete();
             return redirect()->back()->with('succ', '');
         } else return redirect()->back()->with('error', '');
@@ -347,7 +360,9 @@ class Controller extends BaseController
         $validator = Validator::make(
             $req->all(),
             [
-                'zonename' => 'required|max:100|unique:zone'
+                'zonename' => ['required', 'max:100', Rule::unique('zone')->where(function ($query) {
+                    return $query->where('shopid', Auth::user()->shopid);
+                })]
             ],
             [
                 'zonename.required' => 'Vui lòng nhập tên khu vực',
@@ -375,7 +390,9 @@ class Controller extends BaseController
         $validator = Validator::make(
             $req->all(),
             [
-                'zonenameedit' => ['required', 'max:100', Rule::unique('zone', 'zonename')->ignore($req->idzone, 'idzone')]
+                'zonenameedit' => ['required', 'max:100', Rule::unique('zone', 'zonename')->where(function ($query) {
+                    return $query->where('shopid', Auth::user()->shopid);
+                })->ignore($req->idzone, 'idzone')]
             ],
             [
                 'zonenameedit.required' => 'Vui lòng nhập tên khu vực',
@@ -421,7 +438,9 @@ class Controller extends BaseController
         $validator = Validator::make(
             $req->all(),
             [
-                'deskname' => 'required|max:50|unique:desk',
+                'deskname' => ['required', 'max:50', Rule::unique('desk')->where(function ($query) {
+                    return $query->where('shopid', Auth::user()->shopid);
+                })],
                 'idzone' => 'numeric|not_in:zone,idzone',
             ],
             [
@@ -452,7 +471,9 @@ class Controller extends BaseController
         $validator = Validator::make(
             $req->all(),
             [
-                'desknameedit' => ['required', 'max:50', Rule::unique('desk', 'deskname')->ignore($req->iddesk, 'iddesk')],
+                'desknameedit' => ['required', 'max:50', Rule::unique('desk', 'deskname')->where(function ($query) {
+                    return $query->where('shopid', Auth::user()->shopid);
+                })->ignore($req->iddesk, 'iddesk')],
                 'idzoneedit' => 'numeric|not_in:zone,idzone',
             ],
             [
@@ -480,8 +501,11 @@ class Controller extends BaseController
     public function postDeleteDesk(Request $req)
     {
         $desk = Desk::where('iddesk', $req->iddeskdel)->first();
-        $desk->delete();
-        return redirect()->back()->with('succ', '');
+        $bill = Bill::where('deskid', $desk->iddesk)->get();
+        if ($bill->count() == 0) {
+            $desk->delete();
+            return redirect()->back()->with('succ', '');
+        } else return redirect()->back()->with('error', '');
     }
 
     public function getVoucher(Request $req)
@@ -496,7 +520,9 @@ class Controller extends BaseController
         $validator = Validator::make(
             $req->all(),
             [
-                'vouchername' => 'required|max:100|unique:voucher',
+                'vouchername' => ['required', 'max:100', Rule::unique('voucher')->where(function ($query) {
+                    return $query->where('shopid', Auth::user()->shopid);
+                })],
                 'sale' => 'required|numeric',
                 'startday' => 'required',
                 'endday' => 'required'
@@ -516,11 +542,16 @@ class Controller extends BaseController
         }
 
         try {
+            $a = explode('/', $req->startday);
+            $startday = Carbon::create($a[2], $a[1], $a[0]);
+            $b = explode('/', $req->endday);
+            $endday = Carbon::create($b[2], $b[1], $b[0]);
+
             $voucher = new Voucher;
             $voucher->vouchername = $req->vouchername;
             $voucher->sale = $req->sale;
-            $voucher->startday = $req->startday;
-            $voucher->endday = $req->endday;
+            $voucher->startday = $startday;
+            $voucher->endday = $endday;
             $voucher->shopid = Auth::user()->shopid;
             $voucher->save();
             return redirect()->back()->with('success', '');
@@ -534,7 +565,9 @@ class Controller extends BaseController
         $validator = Validator::make(
             $req->all(),
             [
-                'vouchernameedit' => ['required', 'max:100', Rule::unique('voucher', 'vouchername')->ignore($req->idvoucher, 'idvoucher')],
+                'vouchernameedit' => ['required', 'max:100', Rule::unique('voucher', 'vouchername')->where(function ($query) {
+                    return $query->where('shopid', Auth::user()->shopid);
+                })->ignore($req->idvoucher, 'idvoucher')],
                 'saleedit' => 'required|numeric',
                 'startdayedit' => 'required',
                 'enddayedit' => 'required'
@@ -554,11 +587,16 @@ class Controller extends BaseController
         }
 
         try {
+            $a = explode('/', $req->startdayedit);
+            $startday = Carbon::create($a[2], $a[1], $a[0]);
+            $b = explode('/', $req->enddayedit);
+            $endday = Carbon::create($b[2], $b[1], $b[0]);
+
             $voucher = Voucher::where('idvoucher', $req->idvoucher)->first();
             $voucher->vouchername = $req->vouchernameedit;
             $voucher->sale = $req->saleedit;
-            $voucher->startday = $req->startdayedit;
-            $voucher->endday = $req->enddayedit;
+            $voucher->startday = $startday;
+            $voucher->endday = $endday;
             $voucher->update();
             return redirect()->back()->with('success', '');
         } catch (\Throwable $th) {
@@ -585,7 +623,9 @@ class Controller extends BaseController
         $validator = Validator::make(
             $req->all(),
             [
-                'suppname' => 'required|max:50|unique:supplier',
+                'suppname' => ['required', 'max:50', Rule::unique('supplier')->where(function ($query) {
+                    return $query->where('shopid', Auth::user()->shopid);
+                })],
                 'suppaddress' => 'required|max:100',
                 'suppphone' => 'required|min:12'
             ],
@@ -621,7 +661,9 @@ class Controller extends BaseController
         $validator = Validator::make(
             $req->all(),
             [
-                'suppnameedit' => ['required', 'max:50', Rule::unique('supplier', 'suppname')->ignore($req->idsupp, 'idsupp')],
+                'suppnameedit' => ['required', 'max:50', Rule::unique('supplier', 'suppname')->where(function ($query) {
+                    return $query->where('shopid', Auth::user()->shopid);
+                })->ignore($req->idsupp, 'idsupp')],
                 'suppaddressedit' => 'required|max:100',
                 'suppphoneedit' => 'required|min:12'
             ],
@@ -640,7 +682,7 @@ class Controller extends BaseController
         }
 
         try {
-            $supp = Supplier::where('idsupp',$req->idsupp)->first();
+            $supp = Supplier::where('idsupp', $req->idsupp)->first();
             $supp->suppname = $req->suppnameedit;
             $supp->suppaddress = $req->suppaddressedit;
             $supp->suppphone = $req->suppphoneedit;
@@ -661,8 +703,705 @@ class Controller extends BaseController
         } else return redirect()->back()->with('error', '');
     }
 
+    public function getWorkday(Request $req)
+    {
+        $dayfrom = Carbon::today();
+        $dayto = Carbon::today();
+        if ($req->dayfrom && $req->dayto) {
+            $a = explode('/', $req->dayfrom);
+            $b = explode('/', $req->dayto);
+            $dayfrom = Carbon::create($a[2], $a[1], $a[0]);
+            $dayto = Carbon::create($b[2], $b[1], $b[0]);
+        }
+        if ($dayfrom == $dayto) {
+            $wds = Workday::join('users', 'users.id', '=', 'workday.userid')->where('workday.shopid', Auth::user()->shopid)
+                ->where('wddate', '<=', $dayto)->where('wddate', '>=', $dayfrom)->get();
+        } else {
+            $wds = Workday::selectRaw('name, sum(hour) as hour')
+                ->join('users', 'users.id', '=', 'workday.userid')->where('workday.shopid', Auth::user()->shopid)
+                ->where('wddate', '<=', $dayto)->where('wddate', '>=', $dayfrom)->groupBy('name')->get();
+        }
+        $users = User::where('shopid', Auth::user()->shopid)->get();
+        return view('workday', compact('wds', 'users', 'dayfrom', 'dayto'));
+    }
 
+    public function postNewWorkday(Request $req)
+    {
+        $validator = Validator::make(
+            $req->all(),
+            [
+                'iduser' => 'required|max:50|not_in:users,id',
+                'hour' => 'required|numeric',
+                'wddate' => 'required|min:10'
+            ],
+            [
+                'iduser.required' => 'Vui lòng chọn nhân viên',
+                'iduser.not_in' => 'Nhân viên này không có trong cửa hàng',
+                'hour.required' => 'Vui lòng nhập số giờ làm',
+                'hour.numeric' => 'Số giờ làm phải là số',
+                'wddate.required' => 'Vui lòng nhập ngày chấm công',
+                'wddate.min' => 'Ngày chấm công không đúng định dạng'
+            ]
+        );
 
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator, 'postNewWorkday_Error')->withInput();
+        }
 
+        try {
+            $a = explode('/', $req->wddate);
+            $wddate = Carbon::create($a[2], $a[1], $a[0]);
+            $check = Workday::where('userid', $req->iduser)->where('wddate', $wddate)->first();
+            if (!$check) {
+                $wd = new Workday;
+                $wd->userid = $req->iduser;
+                $wd->wddate = $wddate;
+                $wd->hour = $req->hour;
+                $wd->shopid = Auth::user()->shopid;
+                $wd->save();
+                return redirect()->back()->with('success', '');
+            } else
+                return redirect()->back()->with('wderr', '');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('err', '');
+        }
+    }
 
+    public function postEditWorkday(Request $req)
+    {
+        $validator = Validator::make(
+            $req->all(),
+            [
+                'houredit' => 'required|numeric',
+                'wddateedit' => 'required|min:10'
+            ],
+            [
+                'houredit.required' => 'Vui lòng nhập số giờ làm',
+                'houredit.numeric' => 'Số giờ làm phải là số',
+                'wddateedit.required' => 'Vui lòng nhập ngày chấm công',
+                'wddateedit.min' => 'Ngày chấm công không đúng định dạng'
+            ]
+        );
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator, 'postEditWorkday_Error')->withInput();
+        }
+
+        try {
+            $a = explode('/', $req->wddateedit);
+            $wddate = Carbon::create($a[2], $a[1], $a[0]);
+            $check = Workday::where('userid', $req->iduser)->where('wddate', $wddate)->first();
+            if (!$check) {
+                $wd = Workday::where('idwd', $req->idwd)->first();
+                $wd->wddate = $wddate;
+                $wd->hour = $req->houredit;
+                $wd->update();
+                return redirect()->back()->with('success', '');
+            } else
+                return redirect()->back()->with('wderr', '');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('err', '');
+        }
+    }
+
+    public function postDeleteWorkday(Request $req)
+    {
+        $wd = Workday::where('idwd', $req->idwddel)->first();
+        $wd->delete();
+        return redirect()->back()->with('succ', '');
+    }
+
+    public function getCategory(Request $req)
+    {
+        $procates = ProductCate::where('procatename', 'like', '%' . $req->search . '%')->where('shopid', Auth::user()->shopid)->get();
+        $search = $req->search;
+        return view('category', compact('procates', 'search'));
+    }
+
+    public function postNewCategory(Request $req)
+    {
+        $validator = Validator::make(
+            $req->all(),
+            [
+                'procatename' => ['required', 'max:100', Rule::unique('productcate')->where(function ($query) {
+                    return $query->where('shopid', Auth::user()->shopid);
+                })]
+            ],
+            [
+                'procatename.required' => 'Vui lòng nhập tên danh mục',
+                'procatename.unique' => 'Danh mục sản phẩm "' . ucwords($req->procatename) . '" đã tồn tại. Vui lòng thử lại với tên khác',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator, 'postNewCate_Error')->withInput();
+        }
+
+        try {
+            $procate = new ProductCate;
+            $procate->procatename = $req->procatename;
+            $procate->shopid = Auth::user()->shopid;
+            $procate->save();
+            return redirect()->back()->with('success', '');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('err', '');
+        }
+    }
+
+    public function postEditCategory(Request $req)
+    {
+        $validator = Validator::make(
+            $req->all(),
+            [
+                'procatenameedit' => ['required', 'max:100', Rule::unique('productcate', 'procatename')->where(function ($query) {
+                    return $query->where('shopid', Auth::user()->shopid);
+                })->ignore($req->idprocate, 'idprocate')]
+            ],
+            [
+                'procatenameedit.required' => 'Vui lòng nhập tên khu vực',
+                'procatenameedit.unique' => 'Danh mục sản phẩm "' . ucwords($req->procatenameedit) . '" đã tồn tại. Vui lòng thử lại với tên khác',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator, 'postEditCate_Error')->withInput();
+        }
+
+        try {
+            $procate = ProductCate::where('idprocate', $req->idprocate)->first();
+            $procate->procatename = $req->procatenameedit;
+            $procate->update();
+            return redirect()->back()->with('success', '');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('err', '');
+        }
+    }
+
+    public function postDeleteCategory(Request $req)
+    {
+        $procate = ProductCate::where('idprocate', $req->idprocatedel)->first();
+        $pro = Product::where('procateid', $procate->idprocate)->get();
+        if ($pro->count() == 0) {
+            $procate->delete();
+            return redirect()->back()->with('succ', '');
+        } else return redirect()->back()->with('error', '');
+    }
+
+    public function getMaterial(Request $req)
+    {
+        $materials = Material::where('maname', 'like', '%' . $req->search . '%')->where('shopid', Auth::user()->shopid)->get();
+        $search = $req->search;
+        return view('material', compact('materials', 'search'));
+    }
+
+    public function postNewMaterial(Request $req)
+    {
+        $validator = Validator::make(
+            $req->all(),
+            [
+                'maname' => ['required', 'max:100', Rule::unique('material')->where(function ($query) {
+                    return $query->where('shopid', Auth::user()->shopid);
+                })],
+                'maprice' => 'nullable|numeric|min:0|max:100000000',
+                'unit' => 'required|max:50'
+            ],
+            [
+                'maname.required' => 'Vui lòng nhập tên nguyên liệu',
+                'maname.unique' => 'Nguyên liệu "' . ucwords($req->maname) . '" đã tồn tại. Vui lòng thử lại với tên khác',
+                'maprice.numeric' => 'Giá nhập phải là số',
+                'maprice.min' => 'Giá nhập phải lớn hơn 0',
+                'maprice.max' => 'Giá nhập phải nhỏ hơn 100.000.000',
+                'unit.required' => 'Vui lòng nhập đơn vị tính'
+            ]
+        );
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator, 'postNewMaterial_Error')->withInput();
+        }
+
+        try {
+            $material = new Material;
+            $material->maname = $req->maname;
+            if (!empty($req->maprice) || $req->maprice != '')
+                $material->maprice = $req->maprice;
+            $material->unit = $req->unit;
+            $material->shopid = Auth::user()->shopid;
+            $material->save();
+            return redirect()->back()->with('success', '');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('err', '');
+        }
+    }
+
+    public function postEditMaterial(Request $req)
+    {
+        $validator = Validator::make(
+            $req->all(),
+            [
+                'manameedit' => ['required', 'max:100', Rule::unique('material', 'maname')->where(function ($query) {
+                    return $query->where('shopid', Auth::user()->shopid);
+                })->ignore($req->idma, 'idma')],
+                'mapriceedit' => 'numeric|min:0|max:100000000',
+                'unitedit' => 'required|max:50',
+                'maamountedit' => 'required|numeric|min:0|max:100000000'
+            ],
+            [
+                'manameedit.required' => 'Vui lòng nhập tên nguyên liệu',
+                'manameedit.unique' => 'Nguyên liệu "' . ucwords($req->manameedit) . '" đã tồn tại. Vui lòng thử lại với tên khác',
+                'mapriceedit.numeric' => 'Giá nhập phải là số',
+                'mapriceedit.min' => 'Giá nhập phải lớn hơn 0',
+                'mapriceedit.max' => 'Giá nhập phải nhỏ hơn 100.000.000',
+                'unitedit.required' => 'Vui lòng nhập đơn vị tính',
+                'maamountedit.min' => 'Số lượng tồn phải lớn hơn 0',
+                'maamountedit.max' => 'Số lượng tồn phải nhỏ hơn 100.000.000',
+                'maamountedit.required' => 'Vui lòng nhập số lượng tồn',
+                'maamountedit.numeric' => 'Số lượng tồn phải là số',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator, 'postNewMaterial_Error')->withInput();
+        }
+
+        try {
+            $material = Material::where('idma', $req->idma)->first();
+            $material->maname = $req->manameedit;
+            if (!empty($req->mapriceedit) || $req->mapriceedit != '')
+                $material->maprice = $req->mapriceedit;
+            $material->unit = $req->unitedit;
+            $material->maamount = $req->maamountedit;
+            $material->update();
+            return redirect()->back()->with('success', '');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('err', '');
+        }
+    }
+
+    public function postDeleteMaterial(Request $req)
+    {
+        $material = Material::where('idma', $req->idmadel)->first();
+        $pro = ImportDetail::where('maid', $material->idma)->get();
+        if ($pro->count() == 0) {
+            $material->delete();
+            return redirect()->back()->with('succ', '');
+        } else return redirect()->back()->with('error', '');
+    }
+
+    public function getImport(Request $req)
+    {
+        $dayfrom = Carbon::today('Asia/Ho_Chi_Minh');
+        $dayto = Carbon::today('Asia/Ho_Chi_Minh');
+        if ($req->dayfrom && $req->dayto) {
+            $a = explode('/', $req->dayfrom);
+            $b = explode('/', $req->dayto);
+            $dayfrom = Carbon::create($a[2], $a[1], $a[0]);
+            $dayto = Carbon::create($b[2], $b[1], $b[0]);
+        }
+        $imps = Import::join('supplier', 'import.suppid', 'supplier.idsupp')->join('users', 'users.id', 'import.userid')
+            ->where('import.shopid', Auth::user()->shopid)->where('impdate', '<=', $dayto)->where('impdate', '>=', $dayfrom)->get();
+        return view('import', compact('imps', 'dayfrom', 'dayto'));
+    }
+
+    public function getNewImport()
+    {
+        $supps = Supplier::where('shopid', Auth::user()->shopid)->get();
+        $mas = Material::where('shopid', Auth::user()->shopid)->get();
+        return view('newimport', compact('supps', 'mas'));
+    }
+
+    public function postNewImport(Request $req)
+    {
+        $validator = Validator::make(
+            $req->all(),
+            [
+                'idsupp' => 'required|numeric|not_in:supplier',
+                'impdate' => 'required|date',
+                'idma.*' => 'required|numeric|not_in:material',
+                'impamount.*' => 'required|numeric|min:1|max:1000000',
+                'impprice.*' => 'required|numeric|min:1|max:1000000000',
+                'imptotal.*' => 'required|numeric',
+
+            ],
+            [
+                'idsupp.required' => 'Vui lòng chọn nhà cung cấp',
+                'idsupp.numeric' => 'Nhà cung cấp phải là số',
+                'idsupp.not_in' => 'Nhà cung cấp không phù hợp',
+                'impdate.required' => 'Vui lòng chọn ngày nhập kho',
+                'impdate.date' => 'Ngày nhập kho không đúng định dạng',
+                'idmma.required' => 'Vui lòng chọn nguyên liệu',
+                'idma.numeric' => 'Nguyên liệu phải là số',
+                'idma.not_in' => 'Nguyên liệu không phù hợp',
+                'impamount.*.required' => 'Vui lòng nhập số lượng',
+                'impamount.*.numeric' => 'Số lượng phải là số',
+                'impamount.*.min' => 'Số lượng phải lớn hơn 0',
+                'impamount.*.max' => 'Số lượng phải nhỏ hơn 1.000.000',
+                'impprice.*.required' => 'Vui lòng nhập đơn giá',
+                'impprice.*.numeric' => 'Đơn giá phải là số',
+                'impprice.*.min' => 'Đơn giá phải lớn hơn 0',
+                'impprice.*.max' => 'Đơn giá phải nhỏ hơn 1.000.000.000',
+                'imptotal.*.required' => 'Vui lòng nhập thành tiền',
+                'imptotal.*.numeric' => 'Thành tiền phải là số'
+            ]
+        );
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator, 'postNewImport_Error')->withInput();
+        }
+
+        try {
+            $temp = str_replace('₫', '', $req->total);
+            $total = str_replace(',', '', $temp);
+            $a = explode('/', $req->impdate);
+            $impdate = Carbon::create($a[2], $a[1], $a[0]);
+
+            $imp = new Import;
+            $imp->suppid = $req->idsupp;
+            $imp->userid = Auth::user()->id;
+            $imp->impdate = $impdate;
+            $imp->total = $total;
+            $imp->shopid = Auth::user()->shopid;
+            $imp->save();
+
+            foreach ($req->idma as $key => $value) {
+                $impdetail = new ImportDetail;
+                $impdetail->impid = $imp->idimp;
+                $impdetail->maid = $value;
+                $impdetail->impamount = $req->impamount[$key];
+                $impdetail->impprice = $req->impprice[$key];
+                $impdetail->imptotal = $req->imptotal[$key];
+                $impdetail->save();
+                $ma = Material::where('idma', $value)->first();
+                $ma->maprice = ($ma->maprice + $req->impprice[$key]) / 2;
+                $ma->maamount = $ma->maamount + $req->impamount[$key];
+                $ma->update();
+            }
+            return redirect()->route('import')->with('success', '');
+        } catch (\Throwable $th) {
+            return redirect()->route('new-import')->with('err', '');
+        }
+    }
+
+    public function getEditImport($id)
+    {
+        $imp = Import::where('idimp', $id)->first();
+        if ($imp) {
+            $impdes = ImportDetail::join('material', 'material.idma', 'importdetail.maid')->where('impid', $id)->get();
+            $supps = Supplier::where('shopid', Auth::user()->shopid)->get();
+            $mas = Material::where('shopid', Auth::user()->shopid)->get();
+            return view('editimport', compact('supps', 'mas', 'imp', 'impdes'));
+        } else
+            return redirect()->route('import');
+    }
+
+    public function postEditImport(Request $req)
+    {
+        $validator = Validator::make(
+            $req->all(),
+            [
+                'idsupp' => 'required|numeric|not_in:supplier',
+                'impdate' => 'required|date',
+                'idma.*' => 'required|numeric|not_in:material',
+                'impamount.*' => 'required|numeric|min:1|max:1000000',
+                'impprice.*' => 'required|numeric|min:1|max:1000000000',
+                'imptotal.*' => 'required|numeric',
+
+            ],
+            [
+                'idsupp.required' => 'Vui lòng chọn nhà cung cấp',
+                'idsupp.numeric' => 'Nhà cung cấp phải là số',
+                'idsupp.not_in' => 'Nhà cung cấp không phù hợp',
+                'impdate.required' => 'Vui lòng chọn ngày nhập kho',
+                'impdate.date' => 'Ngày nhập kho không đúng định dạng',
+                'idmma.required' => 'Vui lòng chọn nguyên liệu',
+                'idma.numeric' => 'Nguyên liệu phải là số',
+                'idma.not_in' => 'Nguyên liệu không phù hợp',
+                'impamount.*.required' => 'Vui lòng nhập số lượng',
+                'impamount.*.numeric' => 'Số lượng phải là số',
+                'impamount.*.min' => 'Số lượng phải lớn hơn 0',
+                'impamount.*.max' => 'Số lượng phải nhỏ hơn 1.000.000',
+                'impprice.*.required' => 'Vui lòng nhập đơn giá',
+                'impprice.*.numeric' => 'Đơn giá phải là số',
+                'impprice.*.min' => 'Đơn giá phải lớn hơn 0',
+                'impprice.*.max' => 'Đơn giá phải nhỏ hơn 1.000.000.000',
+                'imptotal.*.required' => 'Vui lòng nhập thành tiền',
+                'imptotal.*.numeric' => 'Thành tiền phải là số'
+            ]
+        );
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator, 'postEditImport_Error')->withInput();
+        }
+
+        try {
+            $temp = str_replace('₫', '', $req->total);
+            $total = str_replace(',', '', $temp);
+            $a = explode('/', $req->impdate);
+            $impdate = Carbon::create($a[2], $a[1], $a[0]);
+            $size = count($req->idimpde);
+
+            $imp = Import::where('idimp', $req->idimp)->first();
+            $imp->suppid = $req->idsupp;
+            $imp->userid = Auth::user()->id;
+            $imp->impdate = $impdate;
+            $imp->total = $total;
+            $imp->shopid = Auth::user()->shopid;
+            $imp->update();
+
+            foreach ($req->idma as $key => $value) {
+                if ($key < $size) {
+                    $impdetail = ImportDetail::where('idimpde', $req->idimpde[$key])->first();
+
+                    $ma = Material::where('idma', $value)->first();
+                    if ($impdetail->maid == $value) {
+                        $ma->maprice = $ma->maprice + ($req->impprice[$key] - $impdetail->impprice) / 2;
+                        $ma->maamount = $ma->maamount - $impdetail->impamount + $req->impamount[$key];
+                    } else {
+                        $mad = Material::where('idma', $impdetail->maid)->first();
+                        $mad->maamount = $mad->maamount - $impdetail->impamount;
+                        $mad->maprice = $mad->maprice - $impdetail->impprice + $mad->maprice;
+                        $mad->update();
+
+                        $ma->maamount = $ma->maamount + $req->impamount[$key];
+                        $ma->maprice = ($ma->maprice + $req->impprice[$key]) / 2;
+                    }
+                    $ma->update();
+
+                    $impdetail->maid = $value;
+                    $impdetail->impamount = $req->impamount[$key];
+                    $impdetail->impprice = $req->impprice[$key];
+                    $impdetail->imptotal = $req->imptotal[$key];
+                    $impdetail->update();
+                } else {
+                    $impdetail = new ImportDetail;
+                    $impdetail->impid = $imp->idimp;
+                    $impdetail->maid = $value;
+                    $impdetail->impamount = $req->impamount[$key];
+                    $impdetail->impprice = $req->impprice[$key];
+                    $impdetail->imptotal = $req->imptotal[$key];
+                    $impdetail->save();
+                    $ma = Material::where('idma', $value)->first();
+                    $ma->maprice = ($ma->maprice + $req->impprice[$key]) / 2;
+                    $ma->maamount = $ma->maamount + $req->impamount[$key];
+                    $ma->update();
+                }
+            }
+            return redirect()->route('import')->with('success', '');
+        } catch (\Throwable $th) {
+            return redirect()->route('eidt-import', $req->idimp)->with('err', '');
+        }
+    }
+
+    public function getImportDetailView(Request $req)
+    {
+        $data = ImportDetail::join('material', 'material.idma', 'importdetail.maid')->where('impid', $req->idimp)->get();
+        return response()->json($data);
+    }
+
+    public function getImportFindPrice(Request $req)
+    {
+        $data = Material::select('maprice', 'unit')->where('idma', $req->idma)->first();
+        return response()->json($data);
+    }
+
+    public function postDeleteImport(Request $req)
+    {
+        $imp = Import::where('idimp', $req->idimpdel)->first();
+        try {
+            $impde = ImportDetail::where('impid', $imp->idimp)->get();
+            foreach ($impde as $v) {
+                $ma = Material::where('idma', $v->maid)->first();
+                $ma->maamount = $ma->maamount - $v->impamount;
+                $ma->maprice = $ma->maprice - $v->impprice + $ma->maprice;
+                $ma->update();
+            }
+            ImportDetail::where('impid', $imp->idimp)->delete();
+            $imp->delete();
+            return redirect()->back()->with('succ', '');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', '');
+        }
+    }
+
+    public function getProduct(Request $req)
+    {
+        $pros = Product::join('productcate', 'productcate.idprocate', 'product.procateid')
+            ->where('proname', 'like', '%' . $req->search . '%')->where('product.shopid', Auth::user()->shopid)->get();
+        $search = $req->search;
+        return view('product', compact('pros', 'search'));
+    }
+
+    public function getNewProduct()
+    {
+        $procates = ProductCate::where('shopid', Auth::user()->shopid)->get();
+        $mas = Material::where('shopid', Auth::user()->shopid)->get();
+        return view('newproduct', compact('procates', 'mas'));
+    }
+
+    public function postNewProduct(Request $req)
+    {
+        $validator = Validator::make(
+            $req->all(),
+            [
+                'idprocate' => 'required|numeric|not_in:productcate',
+                'proname' => 'required|max:100',
+                'proprice' => 'required|numeric|min:0|max:1000000000',
+                'idma.*' => 'required|numeric|not_in:material',
+                'number.*' => 'required|numeric|min:0|max:10000',
+            ],
+            [
+                'idprocate.required' => 'Vui lòng chọn danh mục',
+                'idprocate.numeric' => 'Danh mục phải là số',
+                'idprocate.not_in' => 'Danh mục không phù hợp',
+                'proname.required' => 'Vui lòng chọn ngày nhập kho',
+                'proname.max' => 'Tên thực đơn tối đa 100 ký tự',
+                'idmma.required' => 'Vui lòng chọn nguyên liệu',
+                'idma.numeric' => 'Nguyên liệu phải là số',
+                'idma.not_in' => 'Nguyên liệu không phù hợp',
+                'number.*.required' => 'Vui lòng nhập số lượng',
+                'number.*.numeric' => 'Số lượng phải là số',
+                'number.*.min' => 'Số lượng phải lớn hơn 0',
+                'number.*.max' => 'Số lượng phải nhỏ hơn 10.000',
+                'proprice.required' => 'Vui lòng nhập giá bán',
+                'proprice.numeric' => 'Giá bán phải là số',
+                'proprice.min' => 'Giá bán phải lớn hơn 0',
+                'proprice.max' => 'Giá bán phải nhỏ hơn 1.000.000.000',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator, 'postNewProduct_Error')->withInput();
+        }
+
+        try {
+            $pro = new Product;
+            $pro->proname = $req->proname;
+            $pro->proprice = $req->proprice;
+            $pro->procateid = $req->idprocate;
+            $pro->shopid = Auth::user()->shopid;
+            $pro->save();
+
+            foreach ($req->idma as $key => $value) {
+                $fo = new Formula;
+                $fo->proid = $pro->idpro;
+                $fo->maid = $value;
+                $fo->number = $req->number[$key];
+                $fo->save();
+            }
+            return redirect()->route('product')->with('success', '');
+        } catch (\Throwable $th) {
+            return redirect()->route('new-product')->with('err', '');
+        }
+    }
+
+    public function getProductDetailView(Request $req)
+    {
+        $data = Formula::join('material', 'material.idma', 'formula.maid')->where('proid', $req->idpro)->get();
+        return response()->json($data);
+    }
+
+    public function getEditProduct($id)
+    {
+        $pro = Product::where('idpro', $id)->first();
+        if ($pro) {
+            $fos = Formula::join('material', 'material.idma', 'formula.maid')->where('proid', $id)->get();
+            $procates = ProductCate::where('shopid', Auth::user()->shopid)->get();
+            $mas = Material::where('shopid', Auth::user()->shopid)->get();
+            return view('editproduct', compact('pro', 'mas', 'fos', 'procates'));
+        } else
+            return redirect()->route('product');
+    }
+
+    public function postEditProduct(Request $req)
+    {
+        $validator = Validator::make(
+            $req->all(),
+            [
+                'idprocate' => 'required|numeric|not_in:productcate',
+                'proname' => 'required|max:100',
+                'proprice' => 'required|numeric|min:0|max:1000000000',
+                'idma.*' => 'required|numeric|not_in:material',
+                'number.*' => 'required|numeric|min:0|max:10000',
+            ],
+            [
+                'idprocate.required' => 'Vui lòng chọn danh mục',
+                'idprocate.numeric' => 'Danh mục phải là số',
+                'idprocate.not_in' => 'Danh mục không phù hợp',
+                'proname.required' => 'Vui lòng chọn ngày nhập kho',
+                'proname.max' => 'Tên thực đơn tối đa 100 ký tự',
+                'idmma.required' => 'Vui lòng chọn nguyên liệu',
+                'idma.numeric' => 'Nguyên liệu phải là số',
+                'idma.not_in' => 'Nguyên liệu không phù hợp',
+                'number.*.required' => 'Vui lòng nhập số lượng',
+                'number.*.numeric' => 'Số lượng phải là số',
+                'number.*.min' => 'Số lượng phải lớn hơn 0',
+                'number.*.max' => 'Số lượng phải nhỏ hơn 10.000',
+                'proprice.required' => 'Vui lòng nhập giá bán',
+                'proprice.numeric' => 'Giá bán phải là số',
+                'proprice.min' => 'Giá bán phải lớn hơn 0',
+                'proprice.max' => 'Giá bán phải nhỏ hơn 1.000.000.000',
+            ]
+        );
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator, 'postEditProduct_Error')->withInput();
+        }
+
+        try {
+            $pro = Product::where('idpro', $req->idpro)->first();
+            $pro->proname = $req->proname;
+            $pro->proprice = $req->proprice;
+            $pro->procateid = $req->idprocate;
+            $pro->update();
+
+            $idfo = Formula::where('proid', $pro->idpro)->pluck('idfo')->toArray();
+            if ($req->idfo) {
+                $diff = array_merge(array_diff($req->idfo, $idfo), array_diff($idfo, $req->idfo));
+                foreach ($req->idma as $key => $value) {
+                    if (array_key_exists($key, $req->idfo)) {
+                        $fo = Formula::where('idfo', $req->idfo[$key])->first();
+                        $fo->maid = $value;
+                        $fo->number = $req->number[$key];
+                        $fo->update();
+                    } else {
+                        $fo = new Formula;
+                        $fo->proid = $pro->idpro;
+                        $fo->maid = $value;
+                        $fo->number = $req->number[$key];
+                        $fo->save();
+                    }
+                }
+            } else {
+                $diff = $idfo;
+                foreach ($req->idma as $key => $value) {
+                    $fo = new Formula;
+                    $fo->proid = $pro->idpro;
+                    $fo->maid = $value;
+                    $fo->number = $req->number[$key];
+                    $fo->save();
+                }
+            }
+            foreach ($diff as $d) {
+                Formula::where('idfo', $d)->delete();
+            }
+            return redirect()->route('product')->with('success', '');
+        } catch (\Throwable $th) {
+            return redirect()->route('edit-product', $req->idpro)->with('err', '');
+        }
+    }
+
+    public function postDeleteProduct(Request $req)
+    {
+        try {
+            $pro = Product::where('idpro', $req->idprodel)->first();
+            $billde = BillDetail::where('proid', $pro->idpro)->get();
+            if ($billde->count() == 0) {
+                Formula::where('proid', $pro->idpro)->delete();
+                $pro->delete();
+                return redirect()->back()->with('succ', '');
+            } else
+                return redirect()->back()->with('error', '');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('error', '');
+        }
+    }
 }

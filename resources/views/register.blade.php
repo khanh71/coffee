@@ -23,7 +23,7 @@
         <div class="container-fluid page-body-wrapper full-page-wrapper d-flex">
             <div class="content-wrapper-login d-flex align-items-center auth px-0">
                 <div class="row w-100 mx-0">
-                    <div class="col-lg-4 mx-auto">
+                    <div class="col-lg-6 mx-auto">
                         <div class="auth-form-light text-left py-5 px-4 px-sm-5">
                             <div class="brand-logo">
                                 <img src="{{asset('images/logo-dark.svg')}}" alt="logo">
@@ -40,7 +40,7 @@
                                 @endforeach
                                 @endif
                                 {{csrf_field()}}
-                                <fieldset>
+                                <fieldset class="mb-3">
                                     <legend>Thông tin đăng nhập</legend>
                                     <div class="form-group">
                                         <input type="text" class="form-control form-control-lg" id="email" name="email" placeholder="Tên đăng nhập" maxLength='50' required>
@@ -52,7 +52,7 @@
                                         <input type="password" class="form-control form-control-lg" id="repassword" name="repassword" placeholder="Xác nhận mật khẩu" maxLength='50' required>
                                     </div>
                                 </fieldset>
-                                <fieldset>
+                                <fieldset class="mb-3">
                                     <legend>Thông tin cá nhân</legend>
                                     <div class="form-group">
                                         <input type="text" class="form-control form-control-lg text-capitalize" id="name" name="name" placeholder="Họ tên" maxLength='50' required>

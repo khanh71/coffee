@@ -25,7 +25,7 @@
       // to the server, etc.  If a hide callback is not given the item
       // will be deleted.
       hide: function(deleteElement) {
-        if (confirm('Are you sure you want to delete this element?')) {
+        if (confirm('Bạn có chắc muốn xóa dòng này?')) {
           $(this).slideUp(deleteElement);
         }
       },

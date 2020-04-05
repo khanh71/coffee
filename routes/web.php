@@ -55,4 +55,41 @@ Route::group(['middleware' => 'CheckLogin'], function () {
     Route::post('new-supplier', 'Controller@postNewSupplier')->name('new-supplier');
     Route::post('edit-supplier', 'Controller@postEditSupplier')->name('edit-supplier');
     Route::post('delete-supplier', 'Controller@postDeleteSupplier')->name('delete-supplier');
+
+    Route::get('workday', 'Controller@getWorkday')->name('workday');
+    Route::post('workday', 'Controller@getWorkday')->name('workday');
+    Route::post('new-workday', 'Controller@postNewWorkday')->name('new-workday');
+    Route::post('edit-workday', 'Controller@postEditWorkday')->name('edit-workday');
+    Route::post('delete-workday', 'Controller@postDeleteWorkday')->name('delete-workday');
+
+    Route::get('category', 'Controller@getCategory')->name('category');
+    Route::post('category', 'Controller@getCategory')->name('category');
+    Route::post('new-category', 'Controller@postNewCategory')->name('new-category');
+    Route::post('edit-category', 'Controller@postEditCategory')->name('edit-category');
+    Route::post('delete-category', 'Controller@postDeleteCategory')->name('delete-category');
+
+    Route::get('material', 'Controller@getMaterial')->name('material');
+    Route::post('material', 'Controller@getMaterial')->name('material');
+    Route::post('new-material', 'Controller@postNewMaterial')->name('new-material');
+    Route::post('edit-material', 'Controller@postEditMaterial')->name('edit-material');
+    Route::post('delete-material', 'Controller@postDeleteMaterial')->name('delete-material');
+
+    Route::get('import', 'Controller@getImport')->name('import');
+    Route::post('import', 'Controller@getImport')->name('import');
+    Route::get('new-import', 'Controller@getNewImport')->name('new-import');
+    Route::post('new-import', 'Controller@postNewImport')->name('new-import');
+    Route::get('edit-import/{id}', 'Controller@getEditImport')->name('edit-import');
+    Route::post('edit-import/{id}', 'Controller@postEditImport')->name('edit-import');
+    Route::get('import-find-price', 'Controller@getImportFindPrice')->name('import-find-price');
+    Route::get('import-detail-view', 'Controller@getImportDetailView')->name('import-detail-view');
+    Route::post('delete-import', 'Controller@postDeleteImport')->name('delete-import');
+
+    Route::get('product', 'Controller@getProduct')->name('product');
+    Route::post('product', 'Controller@getProduct')->name('product');
+    Route::get('new-product', 'Controller@getNewProduct')->name('new-product');
+    Route::post('new-product', 'Controller@postNewProduct')->name('new-product');
+    Route::get('product-detail-view', 'Controller@getProductDetailView')->name('product-detail-view');
+    Route::get('edit-product/{id}', 'Controller@getEditProduct')->name('edit-product');
+    Route::post('edit-product/{id}', 'Controller@postEditProduct')->name('edit-product');
+    Route::post('delete-product', 'Controller@postDeleteProduct')->name('delete-product');
 });

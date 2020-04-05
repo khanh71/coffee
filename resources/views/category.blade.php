@@ -1,5 +1,5 @@
 @extends('app')
-@section('title','Quản lý chức vụ')
+@section('title','Quản lý Danh mục sản phẩm')
 @section('css')
 <link rel="stylesheet" href="{{asset('vendors/datatables.net-bs4/dataTables.bootstrap4.css')}}">
 <link rel="stylesheet" href="{{asset('vendors/jquery-toast-plugin/jquery.toast.min.css')}}">
@@ -26,7 +26,7 @@
 @if(Session::has('succ')) <script>
     swal({
         title: "Thành công",
-        text: "Xóa chức vụ thành công",
+        text: "Xóa danh mục sản phẩm thành công",
         icon: "success"
     });
 </script> @endif
@@ -34,53 +34,51 @@
 @if(Session::has('error')) <script>
     swal({
         title: "Lỗi",
-        text: "Chức vụ này đã được sử dụng, không thể xóa",
+        text: "Danh mục sản phẩm này đã được sử dụng, không thể xóa",
         icon: "error"
     });
 </script> @endif
 <script type="text/javascript">
-    @if(count($errors -> postNewPosition_Error) > 0)
+    @if(count($errors -> postNewCate_Error) > 0)
     $('#new').modal('show');
     @endif
-    @if(count($errors -> postEditPosition_Error) > 0)
+    @if(count($errors -> postEditCate_Error) > 0)
     $('#edit').modal('show');
     @endif
 
     $("#new").on('shown.bs.modal', function() {
-        $(this).find('#posname').focus();
+        $(this).find('#procatename').focus();
     });
     $('#edit').on('show.bs.modal', function(event) {
         var button = $(event.relatedTarget);
-        var idpos = button.data('idpos');
-        var posname = button.data('posname');
-        var coefficient = button.data('coefficient');
+        var idprocate = button.data('idprocate');
+        var procatename = button.data('procatename');
         var model = $(this);
-        model.find('#idpos').val(idpos);
-        model.find('#posnameedit').val(posname);
-        model.find('#coefficientedit').val(coefficient);
+        model.find('#idprocate').val(idprocate);
+        model.find('#procatenameedit').val(procatename);
     })
 
     $('#delete').on('show.bs.modal', function(event) {
         var button = $(event.relatedTarget);
-        var idpos = button.data('idpos');
+        var idprocate = button.data('idprocate');
         var model = $(this);
-        model.find('#idposdel').val(idpos);
+        model.find('#idprocatedel').val(idprocate);
     })
 </script>
 @endsection
 
 @section('content')
-<!--list of position-->
+<!--list of procate-->
 <div class="card">
     <div class="card-body">
-        <div class="card-title ribbon ribbon-primary"><div class="glow"></div>Quản lý Chức vụ</div>
+        <div class="card-title ribbon ribbon-primary"><div class="glow"></div>Quản lý Danh mục sản phẩm</div>
         <div class="row">
             <div class="col-12">
                 <div class="row">
-                    <form action="{{route('position')}}" method="post" class="col-md-11">
+                    <form action="{{route('category')}}" method="post" class="col-md-11">
                         {{csrf_field()}}
                         <div class="form-group input-group">
-                            <input name="search" type="text" class="form-control text-capitalize" placeholder="Nhập chức vụ bạn cần tìm vào đây nhé..." value="{{$search}}" autofocus>
+                            <input name="search" type="text" class="form-control text-capitalize" placeholder="Nhập danh mục sản phẩm bạn cần tìm vào đây nhé..." value="{{$search}}" autofocus>
                             <span class="input-group-append">
                                 <button type="submit" class="btn btn-icon-text btn-primary"><i class="mdi mdi-magnify btn-icon-prepend"></i>Tìm Kiếm</button>
                             </span>
@@ -93,28 +91,26 @@
                         <thead>
                             <tr>
                                 <th>STT</th>
-                                <th>Tên chức vụ</th>
-                                <th>Hệ số lương</th>
+                                <th>Tên danh mục sản phẩm</th>
                                 <th>Sửa</th>
                                 <th>Xóa</th>
                             </tr>
                         </thead>
                         <tbody>
-                            @forelse($positions as $key=>$pos)
-                            <tr id="{{$pos->idpos}}">
+                            @forelse($procates as $key=>$procate)
+                            <tr id="{{$procate->idprocate}}">
                                 <td>{{$key+1}}</td>
-                                <td>{{$pos->posname}}</td>
-                                <td>{{$pos->coefficient}}</td>
+                                <td>{{$procate->procatename}}</td>
                                 <td>
-                                    <button class="btn btn-info btn-rounded btn-icon" data-idpos="{{$pos->idpos}}" data-posname="{{$pos->posname}}" data-coefficient="{{$pos->coefficient}}" data-toggle="modal" data-target="#edit"><i class="mdi mdi-pencil"></i></button>
+                                    <button class="btn btn-info btn-rounded btn-icon" data-idprocate="{{$procate->idprocate}}" data-procatename="{{$procate->procatename}}" data-toggle="modal" data-target="#edit"><i class="mdi mdi-pencil"></i></button>
                                 </td>
                                 <td>
-                                    <button class="btn btn-icon btn-rounded btn-danger" data-idpos="{{$pos->idpos}}" data-toggle="modal" data-target="#delete"><i class="mdi mdi-delete-forever"></i></button>
+                                    <button class="btn btn-icon btn-rounded btn-danger" data-idprocate="{{$procate->idprocate}}" data-toggle="modal" data-target="#delete"><i class="mdi mdi-delete-forever"></i></button>
                                 </td>
                             </tr>
                             @empty
                             <tr>
-                                <td colspan="5" class="text-center">Không có dữ liệu</td>
+                                <td colspan="4" class="text-center">Không có dữ liệu</td>
                             </tr>
                             @endforelse
                         </tbody>
@@ -124,22 +120,22 @@
         </div>
     </div>
 </div>
-<!--end list of position-->
+<!--end list of procate-->
 
-<!--add position-->
+<!--add procate-->
 <div class="modal fade" id="new" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-uppercase" id="ModalLabel">Thêm chức vụ</h5>
+                <h5 class="modal-title text-uppercase" id="ModalLabel">Thêm danh mục sản phẩm</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form class="forms-sample" id="newPositionForm" method="post" action="{{route('new-position')}}">
-                    @if(count($errors->postNewPosition_Error)>0)
-                    @foreach($errors->postNewPosition_Error->all() as $err)
+                <form class="forms-sample" id="newCateForm" method="post" action="{{route('new-category')}}">
+                    @if(count($errors->postNewCate_Error)>0)
+                    @foreach($errors->postNewCate_Error->all() as $err)
                     <div class="alert alert-fill-danger" role="alert">
                         <i class="mdi mdi-information-outline"></i>
                         {{$err}}
@@ -148,12 +144,8 @@
                     @endif
                     {{csrf_field()}}
                     <div class="form-group">
-                        <label for="posname">Tên chức vụ</label>
-                        <input type="text" class="form-control text-capitalize" id="posname" name="posname" maxlength="50" value="{{old('posname')}}">
-                    </div>
-                    <div class="form-group">
-                        <label>Hệ số lương</label>
-                        <input type="number" class="form-control text-capitalize" id="coefficient" name="coefficient" value="{{old('coefficient')}}">
+                        <label>Tên danh mục sản phẩm</label>
+                        <input type="text" class="form-control text-capitalize" id="procatename" name="procatename" required maxlength="100" value="{{old('procatename')}}">
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-success btn-rounded btn-icon-text" type="submit"><i class="mdi mdi-content-save btn-icon-prepend"></i>Lưu</button>
@@ -164,24 +156,24 @@
         </div>
     </div>
 </div>
-<!--end add position-->
+<!--end add procate-->
 
-<!--edit position-->
+<!--edit procate-->
 <div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title text-uppercase" id="ModalLabel">Sửa chức vụ</h5>
+                <h5 class="modal-title text-uppercase" id="ModalLabel">Sửa danh mục sản phẩm</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <div class="modal-body">
-                <form class="forms-sample" id="editPositionForm" method="post" action="{{route('edit-position')}}">
+                <form class="forms-sample" id="editCateForm" method="post" action="{{route('edit-category')}}">
                     {{csrf_field()}}
-                    <input type="hidden" name="idpos" id="idpos" value="{{old('idpos')}}">
-                    @if(count($errors->postEditPosition_Error)>0)
-                    @foreach($errors->postEditPosition_Error->all() as $err)
+                    <input type="hidden" name="idprocate" id="idprocate" value="{{old('idprocate')}}">
+                    @if(count($errors->postEditCate_Error)>0)
+                    @foreach($errors->postEditCate_Error->all() as $err)
                     <div class="alert alert-fill-danger" role="alert">
                         <i class="mdi mdi-information-outline"></i>
                         {{$err}}
@@ -189,12 +181,8 @@
                     @endforeach
                     @endif
                     <div class="form-group">
-                        <label for="posnameedit">Tên chức vụ</label>
-                        <input type="text" class="form-control text-capitalize" id="posnameedit" name="posnameedit" required maxlength="50" autofocus value="{{old('posnameedit')}}">
-                    </div>
-                    <div class="form-group">
-                        <label for="coefficientedit">Hệ số lương</label>
-                        <input type="number" class="form-control text-capitalize" id="coefficientedit" name="coefficientedit" required min='0' max='20' value="{{old('coefficientedit')}}">
+                        <label>Tên danh mục sản phẩm</label>
+                        <input type="text" class="form-control text-capitalize" id="procatenameedit" name="procatenameedit" required maxlength="100" autofocus value="{{old('procatenameedit')}}">
                     </div>
                     <div class="modal-footer">
                         <button class="btn btn-success btn-rounded btn-icon-text" type="submit"><i class="mdi mdi-content-save btn-icon-prepend"></i>Lưu</button>
@@ -205,9 +193,9 @@
         </div>
     </div>
 </div>
-<!--end edit position-->
+<!--end edit procate-->
 
-<!--delete position-->
+<!--delete procate-->
 <div class="modal fade" id="delete" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
         <div class="modal-content">
@@ -215,12 +203,12 @@
                 <div class="confirm-message">
                     <img src="{{asset('images/alert.png')}}" alt="warning icon">
                     <h3 class="text-uppercase">Xóa?</h3>
-                    <p>Bạn thực sự muốn xóa chức vụ này?</p>
-                    <p>Xin hãy đảm bảo rằng chức vụ này chưa được sử dụng.</p>
+                    <p>Bạn thực sự muốn xóa danh mục sản phẩm này?</p>
+                    <p>Xin hãy đảm bảo rằng danh mục sản phẩm này chưa được sử dụng.</p>
                 </div>
-                <form class="forms-sample" method="POST" action="{{route('delete-position')}}">
+                <form class="forms-sample" method="POST" action="{{route('delete-category')}}">
                     {{csrf_field()}}
-                    <input type="hidden" name="idposdel" id="idposdel">
+                    <input type="hidden" name="idprocatedel" id="idprocatedel">
                     <div class="confirm">
                         <button type="button" class="btn btn-primary btn-rounded" data-dismiss="modal">Hủy</button>
                         <button class="btn btn-danger btn-rounded" type="submit">Xóa</button>
@@ -230,5 +218,5 @@
         </div>
     </div>
 </div>
-<!--end delete position-->
+<!--end delete procate-->
 @endsection

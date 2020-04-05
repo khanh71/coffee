@@ -147,4 +147,53 @@
     limitReachedClass: "badge mt-1 badge-danger"
   });
 
+  $('#procatename').maxlength({
+    alwaysShow: true,
+    threshold: 100,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#procatenameedit').maxlength({
+    alwaysShow: true,
+    threshold: 100,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#maname').maxlength({
+    alwaysShow: true,
+    threshold: 100,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#manameedit').maxlength({
+    alwaysShow: true,
+    threshold: 100,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#unit').maxlength({
+    alwaysShow: true,
+    threshold: 50,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#unitedit').maxlength({
+    alwaysShow: true,
+    threshold: 50,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#proname').maxlength({
+    alwaysShow: true,
+    threshold: 100,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
 })(jQuery);

@@ -53,15 +53,45 @@
                     </a>
                 </li>
                 <li class="nav-item">
+                    <a class="nav-link" href="{{route('supplier')}}">
+                        <i class="mdi mdi-truck menu-icon"></i>
+                        <span class="menu-title">Quản Lý Nhà Cung Cấp</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('material')}}">
+                        <i class="mdi mdi-shape-plus menu-icon"></i>
+                        <span class="menu-title">Quản Lý Nguyên Liệu</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('import')}}">
+                        <i class="mdi mdi-import menu-icon"></i>
+                        <span class="menu-title">Quản Lý Nhập Kho</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('category')}}">
+                        <i class="mdi mdi-buffer menu-icon"></i>
+                        <span class="menu-title">Quản Lý Danh Mục</span>
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('product')}}">
+                        <i class="mdi mdi-food menu-icon"></i>
+                        <span class="menu-title">Quản Lý Thực Đơn</span>
+                    </a>
+                </li>
+                <li class="nav-item">
                     <a class="nav-link" href="{{route('voucher')}}">
                         <i class="mdi mdi-sale menu-icon"></i>
                         <span class="menu-title">Quản Lý Khuyến Mãi</span>
                     </a>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" href="{{route('supplier')}}">
-                        <i class="mdi mdi-truck menu-icon"></i>
-                        <span class="menu-title">Quản Lý Nhà Cung Cấp</span>
+                    <a class="nav-link" href="{{route('workday')}}">
+                        <i class="mdi mdi-calendar-clock menu-icon"></i>
+                        <span class="menu-title">Quản Lý Chấm Công</span>
                     </a>
                 </li>
                 <li class="nav-item sidebar-category">
@@ -69,16 +99,10 @@
                     <span></span>
                 </li>
                 <li class="nav-item">
-                    <a class="nav-link" data-toggle="collapse" href="#ui-advanced" aria-expanded="false" aria-controls="ui-advanced">
-                        <i class="mdi mdi-layers menu-icon"></i>
-                        <span class="menu-title">Advanced UI</span>
-                        <i class="menu-arrow"></i>
+                    <a class="nav-link" href="{{route('workday')}}">
+                        <i class="mdi mdi-square-inc-cash menu-icon"></i>
+                        <span class="menu-title">Bán Hàng</span>
                     </a>
-                    <div class="collapse" id="ui-advanced">
-                        <ul class="nav flex-column sub-menu">
-                            <li class="nav-item"> <a class="nav-link" href="pages/ui-features/dragula.html">Dragula</a></li>
-                        </ul>
-                    </div>
                 </li>
                 <li class="nav-item sidebar-category">
                     <p>Báo Cáo</p>

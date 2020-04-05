@@ -42,12 +42,12 @@
     });
 </script> @endif
 <script type="text/javascript">
-    // @if(count($errors -> postNewEmployee_Error) > 0)
-    // $('#new').modal('show');
-    // @endif
-    // @if(count($errors -> postEditEmployee_Error) > 0)
-    // $('#edit').modal('show');
-    // @endif
+    @if(count($errors -> postNewEmployee_Error) > 0)
+    $('#new').modal('show');
+    @endif
+    @if(count($errors -> postEditEmployee_Error) > 0)
+    $('#edit').modal('show');
+    @endif
 
 
     $("#new").on('shown.bs.modal', function() {
@@ -89,11 +89,11 @@
 <!--list of empolyee-->
 <div class="card">
     <div class="card-body">
-        <div class="card-title">Quản lý Nhân viên</div>
+        <div class="card-title ribbon ribbon-primary"><div class="glow"></div>Quản lý Nhân viên</div>
         <div class="row">
             <div class="col-12">
                 <div class="row">
-                    <form action="{{route('employee')}}" method="post" class="col-md-9">
+                    <form action="{{route('employee')}}" method="post" class="col-md-11">
                         {{csrf_field()}}
                         <div class="form-group input-group">
                             <input name="search" type="text" class="form-control text-capitalize" placeholder="Nhập nhân viên bạn cần tìm vào đây nhé..." value="{{$search}}" autofocus>
@@ -102,7 +102,7 @@
                             </span>
                         </div>
                     </form>
-                    <div class="col-md-3 text-right"><button class="btn btn-success btn-icon-text btn-rounded" data-toggle="modal" data-target="#new"><i class="mdi mdi-plus btn-icon-prepend"></i>Thêm</button></div>
+                    <div class="col-md-1 text-right"><button class="btn btn-success btn-icon btn-rounded" data-toggle="modal" data-target="#new"><i class="mdi mdi-plus"></i></button></div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover">
@@ -130,7 +130,7 @@
                                 <td>{{$emp->phone}}</td>
                                 <td>{{$emp->startday}}</td>
                                 <td>{{$emp->posname}}</td>
-                                <td>{{number_format($emp->basesalary)}}</td>
+                                <td>{{number_format($emp->basesalary).'₫'}}</td>
                                 <td>
                                     <button class="btn btn-info btn-rounded btn-icon" data-toggle="modal" data-iduser="{{$emp->id}}" data-name="{{$emp->name}}" data-address="{{$emp->address}}" data-birthday="{{$emp->birthday}}" data-phone="{{$emp->phone}}" data-startday="{{$emp->startday}}" data-idposition="{{$emp->posid}}" data-basesalary="{{$emp->basesalary}}" data-target="#edit"><i class="mdi mdi-pencil"></i></button>
                                 </td>
