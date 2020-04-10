@@ -16,7 +16,7 @@
     <link rel="stylesheet" href="{{asset('css/style.css')}}">
     @yield('css')
     <!-- endinject -->
-    <link rel="shortcut icon" href="{{asset('images/favicon.svg')}}" />
+    <link rel="shortcut icon" href="{{asset('images/favicon.png')}}" />
 </head>
 
 <body class="sidebar-icon-only navbar-fixed-top">
@@ -24,6 +24,16 @@
         <!-- partial:partials/_sidebar.html -->
         <nav class="sidebar sidebar-offcanvas" id="sidebar">
             <ul class="nav">
+                <li class="nav-item sidebar-category">
+                    <p>Bán Hàng</p>
+                    <span></span>
+                </li>
+                <li class="nav-item @if(Request::segment(1)=='')active @endif">
+                    <a class="nav-link" href="{{route('/')}}">
+                        <i class="mdi mdi-square-inc-cash menu-icon"></i>
+                        <span class="menu-title">Bán Hàng</span>
+                    </a>
+                </li>
                 <li class="nav-item sidebar-category">
                     <p>Quản Lý</p>
                     <span></span>
@@ -73,13 +83,13 @@
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('category')}}">
                         <i class="mdi mdi-buffer menu-icon"></i>
-                        <span class="menu-title">Quản Lý Danh Mục</span>
+                        <span class="menu-title">Quản Lý Thực Đơn</span>
                     </a>
                 </li>
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('product')}}">
                         <i class="mdi mdi-food menu-icon"></i>
-                        <span class="menu-title">Quản Lý Thực Đơn</span>
+                        <span class="menu-title">Quản Lý Món</span>
                     </a>
                 </li>
                 <li class="nav-item">
@@ -95,16 +105,6 @@
                     </a>
                 </li>
                 <li class="nav-item sidebar-category">
-                    <p>Bán Hàng</p>
-                    <span></span>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{route('workday')}}">
-                        <i class="mdi mdi-square-inc-cash menu-icon"></i>
-                        <span class="menu-title">Bán Hàng</span>
-                    </a>
-                </li>
-                <li class="nav-item sidebar-category">
                     <p>Báo Cáo</p>
                     <span></span>
                 </li>
@@ -112,97 +112,6 @@
         </nav>
         <!-- partial -->
         <div class="container-fluid page-body-wrapper">
-            <!-- partial:partials/_settings-panel.html -->
-            <div id="right-sidebar" class="settings-panel">
-                <i class="settings-close mdi mdi-close"></i>
-                <ul class="nav nav-tabs" id="setting-panel" role="tablist">
-                    <li class="nav-item">
-                        <a class="nav-link active" id="todo-tab" data-toggle="tab" href="#todo-section" role="tab" aria-controls="todo-section" aria-expanded="true">TO DO LIST</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" id="chats-tab" data-toggle="tab" href="#chats-section" role="tab" aria-controls="chats-section">CHATS</a>
-                    </li>
-                </ul>
-                <div class="tab-content" id="setting-content">
-                    <div class="tab-pane fade show active scroll-wrapper" id="todo-section" role="tabpanel" aria-labelledby="todo-section">
-                        <div class="add-items d-flex px-3 mb-0">
-                            <form class="form w-100">
-                                <div class="form-group d-flex">
-                                    <input type="text" class="form-control todo-list-input" placeholder="Add To-do">
-                                    <button type="submit" class="add btn btn-primary todo-list-add-btn" id="add-task">Add</button>
-                                </div>
-                            </form>
-                        </div>
-                        <div class="list-wrapper px-3">
-                            <ul class="d-flex flex-column-reverse todo-list">
-                                <li>
-                                    <div class="form-check">
-                                        <label class="form-check-label">
-                                            <input class="checkbox" type="checkbox">
-                                            Team review meeting at 3.00 PM
-                                        </label>
-                                    </div>
-                                    <i class="remove mdi mdi-close-circle-outline"></i>
-                                </li>
-                                <li>
-                                    <div class="form-check">
-                                        <label class="form-check-label">
-                                            <input class="checkbox" type="checkbox">
-                                            Prepare for presentation
-                                        </label>
-                                    </div>
-                                    <i class="remove mdi mdi-close-circle-outline"></i>
-                                </li>
-                                <li>
-                                    <div class="form-check">
-                                        <label class="form-check-label">
-                                            <input class="checkbox" type="checkbox">
-                                            Resolve all the low priority tickets due today
-                                        </label>
-                                    </div>
-                                    <i class="remove mdi mdi-close-circle-outline"></i>
-                                </li>
-                                <li class="completed">
-                                    <div class="form-check">
-                                        <label class="form-check-label">
-                                            <input class="checkbox" type="checkbox" checked>
-                                            Schedule meeting for next week
-                                        </label>
-                                    </div>
-                                    <i class="remove mdi mdi-close-circle-outline"></i>
-                                </li>
-                                <li class="completed">
-                                    <div class="form-check">
-                                        <label class="form-check-label">
-                                            <input class="checkbox" type="checkbox" checked>
-                                            Project review
-                                        </label>
-                                    </div>
-                                    <i class="remove mdi mdi-close-circle-outline"></i>
-                                </li>
-                            </ul>
-                        </div>
-                        <div class="events py-4 border-bottom px-3">
-                            <div class="wrapper d-flex mb-2">
-                                <i class="mdi mdi-circle-outline text-primary mr-2"></i>
-                                <span>Feb 11 2018</span>
-                            </div>
-                            <p class="mb-0 font-weight-thin text-gray">Creating component page</p>
-                            <p class="text-gray mb-0">build a js based app</p>
-                        </div>
-                        <div class="events pt-4 px-3">
-                            <div class="wrapper d-flex mb-2">
-                                <i class="mdi mdi-circle-outline text-primary mr-2"></i>
-                                <span>Feb 7 2018</span>
-                            </div>
-                            <p class="mb-0 font-weight-thin text-gray">Meeting with Alisa</p>
-                            <p class="text-gray mb-0 ">Call Sarah Graves</p>
-                        </div>
-                    </div>
-
-                </div>
-            </div>
-            <!-- partial -->
             <!-- partial:partials/_navbar.html -->
             <nav class="navbar col-lg-12 col-12 px-0 py-4 d-flex flex-row navbar-mini fixed-top">
                 <div class="navbar-menu-wrapper d-flex align-items-center justify-content-end">
@@ -221,7 +130,7 @@
                             <a id="down"></a>
                         </li>
                         <li class="nav-item nav-profile dropdown">
-                            <a class="nav-link dropdown-toggle" href="#" data-toggle="dropdown" id="profileDropdown">
+                            <a class="dropdown-toggle" data-toggle="dropdown" id="profileDropdown">
                                 <i class="mdi mdi-account-circle icon-lg"></i>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
@@ -302,7 +211,6 @@
     <script src="{{asset('js/off-canvas.js')}}"></script>
     <script src="{{asset('js/hoverable-collapse.js')}}"></script>
     <script src="{{asset('js/template.js')}}"></script>
-    <script src="{{asset('js/settings.js')}}"></script>
     <!-- endinject -->
     <!-- plugin js for this page -->
     <!-- End plugin js for this page -->

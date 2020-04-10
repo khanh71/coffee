@@ -12874,6 +12874,130 @@ input[type="submit"].btn-block, input[type="reset"].btn-block, input[type="butto
     }
 }
 
+.card-column {
+    width: 100%;
+    border: 3px solid #6640b2;
+    border-top: none;
+    border-radius: .5rem;
+    padding: 0 1rem .5rem;
+}
+
+.card-column .title {
+    position: relative;
+    margin: 0 -1.8rem 1.5rem -1.8rem;
+    background: #efb23b;
+    padding: .5rem;
+    font-weight: 600;
+    font-size: 1.5rem;
+    border-radius: .5rem .5rem 0 0;
+    box-shadow: 0 2px 5px -2px #202020;
+}
+
+.card-column .title:before, .card-column .title:after {
+    content: "";
+    position: absolute;
+}
+
+.card-column .title:before {
+    height: 0;
+    width: 0;
+    border-top: 10px solid #cd8d11;
+    border-left: 10px solid transparent;
+    bottom: -10px;
+    left: 0;
+}
+
+.card-column .title:after {
+    height: 0;
+    width: 0;
+    border-top: 10px solid #cd8d11;
+    border-right: 10px solid transparent;
+    right: 0;
+    bottom: -10px;
+}
+
+.card-column .card {
+    display: inline-block;
+    margin: 0 1rem 1rem 0;
+    border: none;
+    border-radius: .3rem;
+    padding: 0 .3rem .3rem;
+    width: 170px;
+}
+
+.card-column .card label {
+    font-weight: 600;
+    margin-bottom: 0;
+}
+
+#abc .row {
+    margin-top: 3rem;
+}
+
+#abc .row:first-child {
+    margin-top: 0;
+}
+
+/* @media (min-width: 1200px) {
+    .card-column .card {
+        width: 18.7%;
+    }
+}
+
+@media (min-width: 995px) and (max-width: 1200px) {
+    .card-column .card {
+        width: 18.4%;
+    }
+}
+
+@media (min-width: 991px) and (max-width: 995px) {
+    .card-column .card {
+        width: 23.4%;
+    }
+}
+
+@media (min-width: 770px) and (max-width: 991px) {
+    .card-column .card {
+        width: 22.9%;
+    }
+}
+
+@media (min-width: 767px) and (max-width: 770px) {
+    .card-column .card {
+        width: 31.3%;
+    }
+}
+
+@media (min-width: 700px) and (max-width: 767px) {
+    .card-column .card {
+        width: 30.5%;
+    }
+}
+
+@media (min-width: 524px) and (max-width: 700px) {
+    .card-column .card {
+        width: 47.3%;
+    }
+}
+
+@media (min-width: 479px) and (max-width: 524px) {
+    .card-column .card {
+        width: 47%;
+    }
+}
+
+@media (min-width: 430px) and (max-width: 479px) {
+    .card-column .card {
+        width: 46.6%;
+    }
+}
+
+@media (max-width: 430px) {
+    .card-column .card {
+        width: 100%;
+    }
+} */
+
 .card-columns .card {
     margin-bottom: 0.75rem;
 }
@@ -13736,7 +13860,6 @@ a.badge-dark:focus, a.badge-dark.focus {
     line-height: 1;
     color: #000;
     text-shadow: 0 1px 0 #fff;
-    opacity: .5;
 }
 
 .close:hover {
@@ -13900,7 +14023,6 @@ a.close.disabled {
     pointer-events: auto;
     background-color: #ffffff;
     background-clip: padding-box;
-    border: 1px solid #f3f3f3;
     border-radius: 0.3rem;
     outline: 0;
 }
@@ -13928,9 +14050,9 @@ a.close.disabled {
     align-items: flex-start;
     justify-content: space-between;
     padding: 1rem 1rem;
-    border-bottom: 1px solid #c9ccd7;
     border-top-left-radius: 0.3rem;
     border-top-right-radius: 0.3rem;
+    color: #ffffff;
 }
 
 .modal-header .close {
@@ -20154,7 +20276,7 @@ code {
     width: fit-content;
     box-shadow: 2px 2px 5px 0 #00000080;
     border-radius: 1.5rem 3.125rem 3.125rem 0;
-    padding: .5rem 2rem .5rem 1rem;
+    padding: .5rem 1.5rem .5rem 1rem;
 }
 
 .ribbon:before, .ribbon:after {
@@ -20194,6 +20316,10 @@ code {
     background: #00d082;
 }
 
+.ribbon-warning {
+    background: #ffbf36;
+}
+
 @-webkit-keyframes flow {
     0% {
         left: -20px;
@@ -20215,11 +20341,11 @@ code {
         opacity: 0;
     }
     50% {
-        left: 60%;
+        left: 50%;
         opacity: 0.3;
     }
     100% {
-        left: 90%;
+        left: 80%;
         opacity: 0;
     }
 }
@@ -20846,6 +20972,10 @@ select.form-control.border-dark:focus, select.border-dark.asColorPicker-input:fo
     align-items: center;
     -webkit-justify-content: center;
     justify-content: center;
+}
+
+.icon-hg {
+    font-size: 6rem;
 }
 
 .icon-lg {
@@ -21727,7 +21857,7 @@ ul li, ol li, dl li {
 .modal .modal-dialog .modal-content .modal-header .close span {
     font-size: 30px;
     font-weight: bold;
-    color: #6a6a6a;
+    color: #ffffff;
 }
 
 .modal .modal-dialog .modal-content .modal-body {
@@ -27898,7 +28028,3 @@ div.tagsinput span.tag a {
 .modal-body-delete .confirm button {
     margin-left: 10px;
 }
-
-/*# sourceMappingURL=../maps/vertical-layout-light/style.css.map */
-
-/*# sourceMappingURL=../maps/vertical-layout-light/style.css.map */

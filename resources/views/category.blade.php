@@ -1,5 +1,5 @@
 @extends('app')
-@section('title','Quản lý Danh mục sản phẩm')
+@section('title','Quản lý Thực đơn')
 @section('css')
 <link rel="stylesheet" href="{{asset('vendors/datatables.net-bs4/dataTables.bootstrap4.css')}}">
 <link rel="stylesheet" href="{{asset('vendors/jquery-toast-plugin/jquery.toast.min.css')}}">
@@ -26,7 +26,7 @@
 @if(Session::has('succ')) <script>
     swal({
         title: "Thành công",
-        text: "Xóa danh mục sản phẩm thành công",
+        text: "Xóa thực đơn thành công",
         icon: "success"
     });
 </script> @endif
@@ -34,7 +34,7 @@
 @if(Session::has('error')) <script>
     swal({
         title: "Lỗi",
-        text: "Danh mục sản phẩm này đã được sử dụng, không thể xóa",
+        text: "Thực đơn này đã được sử dụng, không thể xóa",
         icon: "error"
     });
 </script> @endif
@@ -71,14 +71,14 @@
 <!--list of procate-->
 <div class="card">
     <div class="card-body">
-        <div class="card-title ribbon ribbon-primary"><div class="glow"></div>Quản lý Danh mục sản phẩm</div>
+        <div class="card-title ribbon ribbon-primary"><div class="glow"></div>Quản lý Thực đơn</div>
         <div class="row">
             <div class="col-12">
                 <div class="row">
                     <form action="{{route('category')}}" method="post" class="col-md-11">
                         {{csrf_field()}}
                         <div class="form-group input-group">
-                            <input name="search" type="text" class="form-control text-capitalize" placeholder="Nhập danh mục sản phẩm bạn cần tìm vào đây nhé..." value="{{$search}}" autofocus>
+                            <input name="search" type="text" class="form-control text-capitalize" placeholder="Nhập thực đơn bạn cần tìm vào đây nhé..." value="{{$search}}" autofocus>
                             <span class="input-group-append">
                                 <button type="submit" class="btn btn-icon-text btn-primary"><i class="mdi mdi-magnify btn-icon-prepend"></i>Tìm Kiếm</button>
                             </span>
@@ -91,7 +91,7 @@
                         <thead>
                             <tr>
                                 <th>STT</th>
-                                <th>Tên danh mục sản phẩm</th>
+                                <th>Tên thực đơn</th>
                                 <th>Sửa</th>
                                 <th>Xóa</th>
                             </tr>
@@ -126,8 +126,8 @@
 <div class="modal fade" id="new" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title text-uppercase" id="ModalLabel">Thêm danh mục sản phẩm</h5>
+            <div class="modal-header bg-success">
+                <h5 class="modal-title text-uppercase" id="ModalLabel"><i class="mdi mdi-plus-box-outline mr-1"></i>Thêm thực đơn</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -144,12 +144,12 @@
                     @endif
                     {{csrf_field()}}
                     <div class="form-group">
-                        <label>Tên danh mục sản phẩm</label>
+                        <label>Tên thực đơn</label>
                         <input type="text" class="form-control text-capitalize" id="procatename" name="procatename" required maxlength="100" value="{{old('procatename')}}">
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-success btn-rounded btn-icon-text" type="submit"><i class="mdi mdi-content-save btn-icon-prepend"></i>Lưu</button>
-                        <button type="button" class="btn btn-light btn-rounded" data-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Hủy</button>
+                        <button class="btn btn-success btn-icon-text" type="submit"><i class="mdi mdi-content-save btn-icon-prepend"></i>Lưu</button>
                     </div>
                 </form>
             </div>
@@ -162,8 +162,8 @@
 <div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title text-uppercase" id="ModalLabel">Sửa danh mục sản phẩm</h5>
+            <div class="modal-header bg-info">
+                <h5 class="modal-title text-uppercase" id="ModalLabel"><i class="mdi mdi-pencil-box-outline mr-1"></i>Sửa thực đơn</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -181,12 +181,12 @@
                     @endforeach
                     @endif
                     <div class="form-group">
-                        <label>Tên danh mục sản phẩm</label>
+                        <label>Tên thực đơn</label>
                         <input type="text" class="form-control text-capitalize" id="procatenameedit" name="procatenameedit" required maxlength="100" autofocus value="{{old('procatenameedit')}}">
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-success btn-rounded btn-icon-text" type="submit"><i class="mdi mdi-content-save btn-icon-prepend"></i>Lưu</button>
-                        <button type="button" class="btn btn-light btn-rounded" data-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Hủy</button>
+                        <button class="btn btn-info btn-icon-text" type="submit"><i class="mdi mdi-content-save btn-icon-prepend"></i>Lưu</button>
                     </div>
                 </form>
             </div>
@@ -203,15 +203,15 @@
                 <div class="confirm-message">
                     <img src="{{asset('images/alert.png')}}" alt="warning icon">
                     <h3 class="text-uppercase">Xóa?</h3>
-                    <p>Bạn thực sự muốn xóa danh mục sản phẩm này?</p>
-                    <p>Xin hãy đảm bảo rằng danh mục sản phẩm này chưa được sử dụng.</p>
+                    <p>Bạn thực sự muốn xóa thực đơn này?</p>
+                    <p>Xin hãy đảm bảo rằng thực đơn này chưa được sử dụng.</p>
                 </div>
                 <form class="forms-sample" method="POST" action="{{route('delete-category')}}">
                     {{csrf_field()}}
                     <input type="hidden" name="idprocatedel" id="idprocatedel">
                     <div class="confirm">
-                        <button type="button" class="btn btn-primary btn-rounded" data-dismiss="modal">Hủy</button>
-                        <button class="btn btn-danger btn-rounded" type="submit">Xóa</button>
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Hủy</button>
+                        <button class="btn btn-danger" type="submit">Xóa</button>
                     </div>
                 </form>
             </div>

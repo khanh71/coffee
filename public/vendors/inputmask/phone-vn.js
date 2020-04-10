@@ -14,7 +14,7 @@
             alias: "abstractphone",
             countrycode: "0",
             phoneCodes: [{
-                mask: "###-###-####",
+                mask: "###.###.####",
                 cc: "VN",
                 cd: "Vietnam",
                 desc_en: "",

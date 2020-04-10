@@ -27,7 +27,7 @@ use App\Workday;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Validator;
 use Illuminate\Validation\Rule;
-use Hashids\Hashids;
+use stdClass;
 
 class Controller extends BaseController
 {
@@ -95,10 +95,16 @@ class Controller extends BaseController
         try {
             $shop = new Shop;
             $user = new User;
+            $pos = new Position;
 
             $shop->shopname = $req->shopname;
             $shop->shopaddress = $req->shopaddress;
             $shop->save();
+
+            $pos->posname = 'Admin';
+            $pos->coefficient = '0';
+            $pos->shopid = $shop->idshop;
+            $pos->save();
 
             $user->email = $req->email;
             $user->password = bcrypt($req->password);
@@ -108,7 +114,7 @@ class Controller extends BaseController
             $user->phone = $req->phone;
             $user->startday = Carbon::now()->format('d/m/Y');
             $user->basesalary = 0;
-            $user->posid = 1;
+            $user->posid = $pos->idpos;
             $user->shopid = $shop->idshop;
             $user->save();
 
@@ -218,14 +224,12 @@ class Controller extends BaseController
             ->where('users.shopid', Auth::user()->shopid)->where('name', 'like', '%' . $req->search . '%')->paginate(30);
         $positions = Position::where('shopid', Auth::user()->shopid)->get();
 
-        $characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $pin = mt_rand(1000000, 9999999)
             . mt_rand(1000000, 9999999)
             . $characters[rand(0, strlen($characters) - 1)];
-        $string = str_shuffle($pin);
-        $hashids = new Hashids($string);
-        $gener_username = $hashids->encode(1, 2);
-        $gener_pass = $hashids->encode(1, 2, 3, 4);
+        $gener_username = str_shuffle($pin);
+        $gener_pass = $gener_username;
         $search = $req->search;
 
         return view('employee', compact('employees', 'gener_username', 'gener_pass', 'positions', 'search'));
@@ -705,8 +709,8 @@ class Controller extends BaseController
 
     public function getWorkday(Request $req)
     {
-        $dayfrom = Carbon::today();
-        $dayto = Carbon::today();
+        $dayfrom = Carbon::today('Asia/Ho_Chi_Minh');
+        $dayto = Carbon::today('Asia/Ho_Chi_Minh');
         if ($req->dayfrom && $req->dayto) {
             $a = explode('/', $req->dayfrom);
             $b = explode('/', $req->dayto);
@@ -828,8 +832,8 @@ class Controller extends BaseController
                 })]
             ],
             [
-                'procatename.required' => 'Vui lòng nhập tên danh mục',
-                'procatename.unique' => 'Danh mục sản phẩm "' . ucwords($req->procatename) . '" đã tồn tại. Vui lòng thử lại với tên khác',
+                'procatename.required' => 'Vui lòng nhập tên thực đơn',
+                'procatename.unique' => 'Thực đơn "' . ucwords($req->procatename) . '" đã tồn tại. Vui lòng thử lại với tên khác',
             ]
         );
 
@@ -859,7 +863,7 @@ class Controller extends BaseController
             ],
             [
                 'procatenameedit.required' => 'Vui lòng nhập tên khu vực',
-                'procatenameedit.unique' => 'Danh mục sản phẩm "' . ucwords($req->procatenameedit) . '" đã tồn tại. Vui lòng thử lại với tên khác',
+                'procatenameedit.unique' => 'Thực đơn "' . ucwords($req->procatenameedit) . '" đã tồn tại. Vui lòng thử lại với tên khác',
             ]
         );
 
@@ -999,7 +1003,9 @@ class Controller extends BaseController
         }
         $imps = Import::join('supplier', 'import.suppid', 'supplier.idsupp')->join('users', 'users.id', 'import.userid')
             ->where('import.shopid', Auth::user()->shopid)->where('impdate', '<=', $dayto)->where('impdate', '>=', $dayfrom)->get();
-        return view('import', compact('imps', 'dayfrom', 'dayto'));
+        $mas = Material::all();
+        $supps = Supplier::all();
+        return view('import', compact('imps', 'dayfrom', 'dayto', 'mas', 'supps'));
     }
 
     public function getNewImport()
@@ -1227,7 +1233,9 @@ class Controller extends BaseController
         $pros = Product::join('productcate', 'productcate.idprocate', 'product.procateid')
             ->where('proname', 'like', '%' . $req->search . '%')->where('product.shopid', Auth::user()->shopid)->get();
         $search = $req->search;
-        return view('product', compact('pros', 'search'));
+        $mas = Material::all();
+        $cates = ProductCate::all();
+        return view('product', compact('pros', 'search', 'mas', 'cates'));
     }
 
     public function getNewProduct()
@@ -1249,9 +1257,9 @@ class Controller extends BaseController
                 'number.*' => 'required|numeric|min:0|max:10000',
             ],
             [
-                'idprocate.required' => 'Vui lòng chọn danh mục',
-                'idprocate.numeric' => 'Danh mục phải là số',
-                'idprocate.not_in' => 'Danh mục không phù hợp',
+                'idprocate.required' => 'Vui lòng chọn thực đơn',
+                'idprocate.numeric' => 'Thực đơn phải là số',
+                'idprocate.not_in' => 'Thực đơn không phù hợp',
                 'proname.required' => 'Vui lòng chọn ngày nhập kho',
                 'proname.max' => 'Tên thực đơn tối đa 100 ký tự',
                 'idmma.required' => 'Vui lòng chọn nguyên liệu',
@@ -1273,21 +1281,25 @@ class Controller extends BaseController
         }
 
         try {
-            $pro = new Product;
-            $pro->proname = $req->proname;
-            $pro->proprice = $req->proprice;
-            $pro->procateid = $req->idprocate;
-            $pro->shopid = Auth::user()->shopid;
-            $pro->save();
+            $arrdup = array_diff_assoc($req->idma, array_unique($req->idma));
+            if (!$arrdup) {
+                $pro = new Product;
+                $pro->proname = $req->proname;
+                $pro->proprice = $req->proprice;
+                $pro->procateid = $req->idprocate;
+                $pro->shopid = Auth::user()->shopid;
+                $pro->save();
 
-            foreach ($req->idma as $key => $value) {
-                $fo = new Formula;
-                $fo->proid = $pro->idpro;
-                $fo->maid = $value;
-                $fo->number = $req->number[$key];
-                $fo->save();
-            }
-            return redirect()->route('product')->with('success', '');
+                foreach ($req->idma as $key => $value) {
+                    $fo = new Formula;
+                    $fo->proid = $pro->idpro;
+                    $fo->maid = $value;
+                    $fo->number = $req->number[$key];
+                    $fo->save();
+                }
+                return redirect()->route('product')->with('success', '');
+            } else
+                return redirect()->route('new-product')->with('dupp', 'Mỗi nguyên liệu chỉ được nhập 1 dòng');
         } catch (\Throwable $th) {
             return redirect()->route('new-product')->with('err', '');
         }
@@ -1323,9 +1335,9 @@ class Controller extends BaseController
                 'number.*' => 'required|numeric|min:0|max:10000',
             ],
             [
-                'idprocate.required' => 'Vui lòng chọn danh mục',
-                'idprocate.numeric' => 'Danh mục phải là số',
-                'idprocate.not_in' => 'Danh mục không phù hợp',
+                'idprocate.required' => 'Vui lòng chọn thực đơn',
+                'idprocate.numeric' => 'Thực đơn phải là số',
+                'idprocate.not_in' => 'Thực đơn không phù hợp',
                 'proname.required' => 'Vui lòng chọn ngày nhập kho',
                 'proname.max' => 'Tên thực đơn tối đa 100 ký tự',
                 'idmma.required' => 'Vui lòng chọn nguyên liệu',
@@ -1347,22 +1359,34 @@ class Controller extends BaseController
         }
 
         try {
-            $pro = Product::where('idpro', $req->idpro)->first();
-            $pro->proname = $req->proname;
-            $pro->proprice = $req->proprice;
-            $pro->procateid = $req->idprocate;
-            $pro->update();
+            $arrdup = array_diff_assoc($req->idma, array_unique($req->idma));
+            if (!$arrdup) {
+                $pro = Product::where('idpro', $req->idpro)->first();
+                $pro->proname = $req->proname;
+                $pro->proprice = $req->proprice;
+                $pro->procateid = $req->idprocate;
+                $pro->update();
 
-            $idfo = Formula::where('proid', $pro->idpro)->pluck('idfo')->toArray();
-            if ($req->idfo) {
-                $diff = array_merge(array_diff($req->idfo, $idfo), array_diff($idfo, $req->idfo));
-                foreach ($req->idma as $key => $value) {
-                    if (array_key_exists($key, $req->idfo)) {
-                        $fo = Formula::where('idfo', $req->idfo[$key])->first();
-                        $fo->maid = $value;
-                        $fo->number = $req->number[$key];
-                        $fo->update();
-                    } else {
+                $idfo = Formula::where('proid', $pro->idpro)->pluck('idfo')->toArray();
+                if ($req->idfo) {
+                    $diff = array_merge(array_diff($req->idfo, $idfo), array_diff($idfo, $req->idfo));
+                    foreach ($req->idma as $key => $value) {
+                        if (array_key_exists($key, $req->idfo)) {
+                            $fo = Formula::where('idfo', $req->idfo[$key])->first();
+                            $fo->maid = $value;
+                            $fo->number = $req->number[$key];
+                            $fo->update();
+                        } else {
+                            $fo = new Formula;
+                            $fo->proid = $pro->idpro;
+                            $fo->maid = $value;
+                            $fo->number = $req->number[$key];
+                            $fo->save();
+                        }
+                    }
+                } else {
+                    $diff = $idfo;
+                    foreach ($req->idma as $key => $value) {
                         $fo = new Formula;
                         $fo->proid = $pro->idpro;
                         $fo->maid = $value;
@@ -1370,20 +1394,12 @@ class Controller extends BaseController
                         $fo->save();
                     }
                 }
-            } else {
-                $diff = $idfo;
-                foreach ($req->idma as $key => $value) {
-                    $fo = new Formula;
-                    $fo->proid = $pro->idpro;
-                    $fo->maid = $value;
-                    $fo->number = $req->number[$key];
-                    $fo->save();
+                foreach ($diff as $d) {
+                    Formula::where('idfo', $d)->delete();
                 }
-            }
-            foreach ($diff as $d) {
-                Formula::where('idfo', $d)->delete();
-            }
-            return redirect()->route('product')->with('success', '');
+                return redirect()->route('product')->with('success', '');
+            } else
+                return redirect()->route('edit-product', $req->idpro)->with('dupp', 'Mỗi nguyên liệu chỉ được nhập 1 dòng');
         } catch (\Throwable $th) {
             return redirect()->route('edit-product', $req->idpro)->with('err', '');
         }
@@ -1402,6 +1418,414 @@ class Controller extends BaseController
                 return redirect()->back()->with('error', '');
         } catch (\Throwable $th) {
             return redirect()->back()->with('error', '');
+        }
+    }
+
+    public function getSell()
+    {
+        $desks = Desk::where('shopid', Auth::user()->shopid)->get();
+        $zones = Zone::where('shopid', Auth::user()->shopid)->get();
+        $shop = Shop::where('idshop', Auth::user()->shopid)->first();
+        return view('sell', compact('desks', 'zones', 'shop'));
+    }
+
+    public function getNewCall($id)
+    {
+        $desk = Desk::where('iddesk', $id)->where('shopid', Auth::user()->shopid)->first();
+        $cates = ProductCate::where('shopid', Auth::user()->shopid)->get();
+        $pros = Product::where('shopid', Auth::user()->shopid)->get();
+        $users = User::where('shopid', Auth::user()->shopid)->get();
+        return view('newcall', compact('desk', 'cates', 'pros', 'users'));
+    }
+
+    public function getFindCate(Request $req)
+    {
+        if ($req->idprocate == 0)
+            $data = Product::where('shopid', Auth::user()->shopid)->get();
+        else
+            $data = Product::where('procateid', $req->idprocate)->where('shopid', Auth::user()->shopid)->get();
+        return response()->json($data);
+    }
+
+    public function getFindProPrice(Request $req)
+    {
+        $data = Product::where('idpro', $req->idpro)->where('shopid', Auth::user()->shopid)->first();
+        return response()->json($data);
+    }
+
+    public function getCheck(Request $req)
+    {
+        $fos = Formula::where('proid', $req->proid)->get();
+        $data = 0;
+        foreach ($fos as $f) {
+            $ma = Material::where('idma', $f->maid)->first();
+            if ($ma->maamount < $f->number * $req->num) {
+                $data = 1;
+                break;
+            }
+        }
+        return response()->json($data);
+    }
+
+    public function getViewMenu(Request $req)
+    {
+        $bill = Bill::where('deskid', $req->deskid)->where('shopid', Auth::user()->shopid)->orderBy('idbill', 'desc')->first();
+        $data = BillDetail::join('product', 'product.idpro', 'billdetail.proid')->where('billid', $bill->idbill)->get();
+        return response()->json($data);
+    }
+
+    public function postNewCall(Request $req)
+    {
+        $validator = Validator::make(
+            $req->all(),
+            [
+                'idprocate.*' => 'required|numeric|not_in:productcate',
+                'idpro.*' => 'required|numeric|not_in:product',
+                'billamount.*' => 'required|numeric|min:1|max:1000',
+                'billprice.*' => 'required|numeric|min:1|max:1000000000',
+                'billtotal.*' => 'required|numeric|min:1|max:1000000000000',
+            ],
+            [
+                'idprocate.*.required' => 'Vui lòng chọn thực đơn',
+                'idprocate.*.numeric' => 'Thực đơn phải là số',
+                'idprocate.*.not_in' => 'Thực đơn không phù hợp',
+                'idpro.*.required' => 'Vui lòng chọn món',
+                'idpro.*.numeric' => 'Món phải là số',
+                'idpro.*.not_in' => 'Món không phù hợp',
+                'billamount.*.required' => 'Vui lòng nhập số lượng',
+                'billamount.*.numeric' => 'Số lượng phải là số',
+                'billamount.*.min' => 'Số lượng phải lớn hơn 0',
+                'billamount.*.max' => 'Số lượng phải nhỏ hơn 1.000',
+                'billprice.required' => 'Vui lòng nhập giá bán',
+                'billprice.numeric' => 'Giá bán phải là số',
+                'billprice.min' => 'Giá bán phải lớn hơn 0',
+                'billprice.max' => 'Giá bán phải nhỏ hơn 1.000.000.000',
+                'billtotal.required' => 'Vui lòng nhập thành tiền',
+                'billtotal.numeric' => 'Thành tiền phải là số',
+                'billtotal.min' => 'Thành tiền phải lớn hơn 0',
+                'billtotal.max' => 'Thành tiền phải nhỏ hơn 1.000.000.000.000',
+
+            ]
+        );
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator, 'postNewCall_Error')->withInput();
+        }
+
+        try {
+            $arrdup = array_diff_assoc($req->idpro, array_unique($req->idpro));
+            if (!$arrdup) {
+                $temp = str_replace('₫', '', $req->total);
+                $total = str_replace(',', '', $temp);
+                $bill = new Bill;
+                $bill->userid = $req->iduser;
+                $bill->deskid = $req->deskid;
+                $bill->billdate = Carbon::today('Asia/Ho_Chi_Minh');
+                $bill->total = $total;
+                $bill->shopid = Auth::user()->shopid;
+                $bill->save();
+                Desk::where('iddesk', $req->deskid)->update(['state' => 1]);
+
+                foreach ($req->idprocate as $key => $value) {
+                    $billde = new BillDetail;
+                    $billde->billid = $bill->idbill;
+                    $billde->procateid = $value;
+                    $billde->proid = $req->idpro[$key];
+                    $billde->billamount = $req->billamount[$key];
+                    $billde->billprice = $req->billprice[$key];
+                    $billde->billtotal = $req->billtotal[$key];
+                    $billde->save();
+
+                    $fos = Formula::join('product', 'product.idpro', 'formula.proid')->where('proid', $req->idpro[$key])->where('shopid', Auth::user()->shopid)->get();
+                    foreach ($fos as $f) {
+                        $ma = Material::where('idma', $f->maid)->where('shopid', Auth::user()->shopid)->first();
+                        $ma->maamount = $ma->maamount - $f->number * $req->billamount[$key];
+                        $ma->update();
+                    }
+                }
+                return redirect()->route('/')->with('success', '');
+            } else
+                return redirect()->route('new-call', $req->deskid)->with('dupp', 'Mỗi món chỉ được nhập 1 dòng');
+        } catch (\Throwable $th) {
+            return redirect()->route('new-call', $req->deskid)->with('err', '');
+        }
+    }
+
+    public function getEditCall($id)
+    {
+        $desk = Desk::where('iddesk', $id)->where('shopid', Auth::user()->shopid)->first();
+        $cates = ProductCate::where('shopid', Auth::user()->shopid)->get();
+        $pros = Product::where('shopid', Auth::user()->shopid)->get();
+        $users = User::where('shopid', Auth::user()->shopid)->get();
+        $bill = Bill::where('deskid', $desk->iddesk)->where('shopid', Auth::user()->shopid)->orderBy('idbill', 'desc')->first();
+        $billde = BillDetail::join('product', 'product.idpro', 'billdetail.proid')->where('billid', $bill->idbill)->get();
+        return view('editcall', compact('desk', 'cates', 'pros', 'users', 'bill', 'billde'));
+    }
+
+    public function postEditCall(Request $req)
+    {
+        $validator = Validator::make(
+            $req->all(),
+            [
+                'idprocate.*' => 'required|numeric|not_in:productcate',
+                'idpro.*' => 'required|numeric|not_in:product',
+                'billamount.*' => 'required|numeric|min:1|max:1000',
+                'billprice.*' => 'required|numeric|min:1|max:1000000000',
+                'billtotal.*' => 'required|numeric|min:1|max:1000000000000',
+            ],
+            [
+                'idprocate.*.required' => 'Vui lòng chọn thực đơn',
+                'idprocate.*.numeric' => 'Thực đơn phải là số',
+                'idprocate.*.not_in' => 'Thực đơn không phù hợp',
+                'idpro.*.required' => 'Vui lòng chọn món',
+                'idpro.*.numeric' => 'Món phải là số',
+                'idpro.*.not_in' => 'Món không phù hợp',
+                'billamount.*.required' => 'Vui lòng nhập số lượng',
+                'billamount.*.numeric' => 'Số lượng phải là số',
+                'billamount.*.min' => 'Số lượng phải lớn hơn 0',
+                'billamount.*.max' => 'Số lượng phải nhỏ hơn 1.000',
+                'billprice.required' => 'Vui lòng nhập giá bán',
+                'billprice.numeric' => 'Giá bán phải là số',
+                'billprice.min' => 'Giá bán phải lớn hơn 0',
+                'billprice.max' => 'Giá bán phải nhỏ hơn 1.000.000.000',
+                'billtotal.required' => 'Vui lòng nhập thành tiền',
+                'billtotal.numeric' => 'Thành tiền phải là số',
+                'billtotal.min' => 'Thành tiền phải lớn hơn 0',
+                'billtotal.max' => 'Thành tiền phải nhỏ hơn 1.000.000.000.000',
+
+            ]
+        );
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator, 'postNewCall_Error')->withInput();
+        }
+
+        try {
+            $arrdup = array_diff_assoc($req->idpro, array_unique($req->idpro));
+            if (!$arrdup) {
+                $temp = str_replace('₫', '', $req->total);
+                $total = str_replace(',', '', $temp);
+                $bill = Bill::where('idbill', $req->idbill)->first();
+                $bill->userid = $req->iduser;
+                $bill->total = $total;
+                $bill->update();
+
+                $idbillde = BillDetail::where('billid', $bill->idbill)->pluck('idbillde')->toArray();
+                if ($req->idbillde) {
+                    $diff = array_merge(array_diff($req->idbillde, $idbillde), array_diff($idbillde, $req->idbillde));
+                    foreach ($req->idprocate as $key => $value) {
+                        if (array_key_exists($key, $req->idbillde)) {
+                            $bde = BillDetail::where('idbillde', $req->idbillde[$key])->first();
+
+                            $old = Formula::join('product', 'product.idpro', 'formula.proid')->where('proid', $bde->proid)->where('shopid', Auth::user()->shopid)->get();
+                            foreach ($old as $f) {
+                                $ma = Material::where('idma', $f->maid)->where('shopid', Auth::user()->shopid)->first();
+                                $ma->maamount = $ma->maamount + $f->number * $bde->billamount;
+                                $ma->update();
+                            }
+
+                            $new = Formula::join('product', 'product.idpro', 'formula.proid')->where('proid', $req->idpro[$key])->where('shopid', Auth::user()->shopid)->get();
+                            foreach ($new as $f) {
+                                $ma = Material::where('idma', $f->maid)->where('shopid', Auth::user()->shopid)->first();
+                                $ma->maamount = $ma->maamount - $f->number * $req->billamount[$key];
+                                $ma->update();
+                            }
+
+                            $bde->procateid = $value;
+                            $bde->proid = $req->idpro[$key];
+                            $bde->billamount = $req->billamount[$key];
+                            $bde->billprice = $req->billprice[$key];
+                            $bde->billtotal = $req->billtotal[$key];
+                            $bde->update();
+                        } else {
+                            $billde = new BillDetail;
+                            $billde->billid = $bill->idbill;
+                            $billde->procateid = $value;
+                            $billde->proid = $req->idpro[$key];
+                            $billde->billamount = $req->billamount[$key];
+                            $billde->billprice = $req->billprice[$key];
+                            $billde->billtotal = $req->billtotal[$key];
+                            $billde->save();
+
+                            $new = Formula::join('product', 'product.idpro', 'formula.proid')->where('proid', $req->idpro[$key])->where('shopid', Auth::user()->shopid)->get();
+                            foreach ($new as $f) {
+                                $ma = Material::where('idma', $f->maid)->where('shopid', Auth::user()->shopid)->first();
+                                $ma->maamount = $ma->maamount - $f->number * $req->billamount[$key];
+                                $ma->update();
+                            }
+                        }
+                    }
+                } else {
+                    $diff = $idbillde;
+                    foreach ($req->idprocate as $key => $value) {
+                        $billde = new BillDetail;
+                        $billde->billid = $bill->idbill;
+                        $billde->procateid = $value;
+                        $billde->proid = $req->idpro[$key];
+                        $billde->billamount = $req->billamount[$key];
+                        $billde->billprice = $req->billprice[$key];
+                        $billde->billtotal = $req->billtotal[$key];
+                        $billde->save();
+
+                        $fos = Formula::join('product', 'product.idpro', 'formula.proid')->where('proid', $req->idpro[$key])->where('shopid', Auth::user()->shopid)->get();
+                        foreach ($fos as $f) {
+                            $ma = Material::where('idma', $f->maid)->where('shopid', Auth::user()->shopid)->first();
+                            $ma->maamount = $ma->maamount - $f->number * $req->billamount[$key];
+                            $ma->update();
+                        }
+                    }
+                }
+                foreach ($diff as $d) {
+                    $bde = BillDetail::where('idbillde', $d)->first();
+                    $old = Formula::join('product', 'product.idpro', 'formula.proid')->where('proid', $bde->proid)->where('shopid', Auth::user()->shopid)->get();
+                    foreach ($old as $f) {
+                        $ma = Material::where('idma', $f->maid)->where('shopid', Auth::user()->shopid)->first();
+                        $ma->maamount = $ma->maamount + $f->number * $bde->billamount;
+                        $ma->update();
+                    }
+                    $bde->delete();
+                }
+                return redirect()->route('/')->with('success', '');
+            } else
+                return redirect()->route('edit-call', $req->deskid)->with('dupp', 'Mỗi món chỉ được nhập 1 dòng');
+        } catch (\Throwable $th) {
+            return redirect()->route('edit-call', $req->deskid)->with('err', '');
+        }
+    }
+
+    public function postDeleteCall(Request $req)
+    {
+        $bill = Bill::where('idbill', $req->idbilldel)->first();
+        $billde = BillDetail::where('billid', $bill->idbill)->get();
+        foreach ($billde as $d) {
+            $fos = Formula::join('product', 'product.idpro', 'formula.proid')->where('proid', $d->proid)->where('shopid', Auth::user()->shopid)->get();
+            foreach ($fos as $f) {
+                $ma = Material::where('idma', $f->maid)->where('shopid', Auth::user()->shopid)->first();
+                $ma->maamount = $ma->maamount + $f->number * $d->billamount;
+                $ma->update();
+            }
+            $d->delete();
+        }
+        $bill->delete();
+        Desk::where('iddesk', $req->iddeskdel)->update(['state' => 0]);
+        return redirect()->route('/')->with('success', '');
+    }
+
+    public function getCheckEdit(Request $req)
+    {
+        $data = 0;
+        if ($req->idbillde) {
+            $billde = BillDetail::where('idbillde', $req->idbillde)->first();
+            $old = Formula::where('proid', $billde->proid)->get();
+            foreach ($old as $f) {
+                $ma = Material::where('idma', $f->maid)->first();
+                $ma->maamount = $ma->maamount + $f->number * $billde->billamount;
+                $new = Formula::where('proid', $req->proid)->get();
+                foreach ($new as $fn) {
+                    if ($ma->maamount < $fn->number * $req->num) {
+                        $data = 1;
+                        break;
+                    }
+                }
+            }
+        } else {
+            $fos = Formula::where('proid', $req->proid)->get();
+            foreach ($fos as $f) {
+                $ma = Material::where('idma', $f->maid)->first();
+                if ($ma->maamount < $f->number * $req->num) {
+                    $data = 1;
+                    break;
+                }
+            }
+        }
+        return response()->json($data);
+    }
+
+    public function postMerge(Request $req)
+    {
+        try {
+            $old = Bill::where('deskid', $req->olddesk)->where('shopid', Auth::user()->shopid)->first();
+            $new = Bill::where('deskid', $req->newdesk)->where('shopid', Auth::user()->shopid)->first();
+            $bd = BillDetail::where('billid', $new->idbill)->get();
+            foreach ($bd as $b) {
+                $o = BillDetail::where('billid', $old->idbill)->where('proid', $b->proid)->first();
+                if ($o) {
+                    $o->billamount = $o->billamount + $b->billamount;
+                    $o->billprice = ($o->billprice + $b->billprice) / 2;
+                    $o->billtotal = $o->billtotal + $b->billtotal;
+                    $o->update();
+                    $b->delete();
+                } else {
+                    $b->billid = $old->idbill;
+                    $b->update();
+                }
+            }
+            Desk::where('iddesk', $new->deskid)->where('shopid', Auth::user()->shopid)->update(['state' => 0]);
+            $old->total = $old->total + $new->total;
+            $old->update();
+            $new->delete();
+            return redirect()->route('/')->with('success', '');
+        } catch (\Throwable $th) {
+            return redirect()->route('/')->with('err', '');
+        }
+    }
+
+    public function getFindDesk(Request $req)
+    {
+        $data = Desk::where('iddesk', '<>', $req->deskid)->where('shopid', Auth::user()->shopid)->where('state', 1)->get();
+        return response()->json($data);
+    }
+
+    public function getPay($id)
+    {
+        $today = Carbon::today('Asia/Ho_Chi_Minh');
+        $desk = Desk::where('iddesk', $id)->where('shopid', Auth::user()->shopid)->first();
+        $bill = Bill::where('deskid', $desk->iddesk)->where('shopid', Auth::user()->shopid)->orderBy('idbill', 'desc')->first();
+        $billde = BillDetail::join('product', 'product.idpro', 'billdetail.proid')->where('billid', $bill->idbill)->get();
+        $vouchers = Voucher::where('startday', '<=', $today)->where('endday', '>=', $today)->where('shopid', Auth::user()->shopid)->get();
+        return view('pay', compact('desk', 'bill', 'billde', 'vouchers'));
+    }
+
+    public function getPrint($deskid, $voucherid)
+    {
+        $desk = Desk::where('iddesk', $deskid)->where('shopid', Auth::user()->shopid)->first();
+        $bill = Bill::where('deskid', $desk->iddesk)->where('shopid', Auth::user()->shopid)->orderBy('idbill', 'desc')->first();
+        $billde = BillDetail::join('product', 'product.idpro', 'billdetail.proid')->where('billid', $bill->idbill)->get();
+        $shop = Shop::where('idshop', Auth::user()->shopid)->first();
+        if ($voucherid == 0) {
+            $voucher = new stdClass;
+            $voucher->sale = 0;
+        } else
+            $voucher = Voucher::where('idvoucher', $voucherid)->where('shopid', Auth::user()->shopid)->first();
+        return view('print', compact('desk', 'bill', 'billde', 'voucher', 'shop'));
+    }
+
+    public function getFindVoucher(Request $req)
+    {
+        $data = Voucher::where('idvoucher', $req->idvoucher)->where('shopid', Auth::user()->shopid)->first();
+        return response()->json($data);
+    }
+
+    public function postPay(Request $req)
+    {
+        try {
+            $temp = str_replace('₫', '', $req->total);
+            $total = str_replace(',', '', $temp);
+            $bill = Bill::where('deskid', $req->deskid)->where('shopid', Auth::user()->shopid)->orderBy('idbill', 'desc')->first();
+            $bill->total = $total;
+            $bill->pay = 1;
+            $bill->voucherid = $req->idvoucher;
+            if ($req->idvoucher == 0)
+                $bill->billsale = 0;
+            else {
+                $voucher = Voucher::where('idvoucher', $req->idvoucher)->where('shopid', Auth::user()->shopid)->first();
+                $bill->billsale = $voucher->sale;
+            }
+            $bill->update();
+            Desk::where('iddesk', $req->deskid)->where('shopid', Auth::user()->shopid)->update(['state' => 0]);
+            return redirect()->route('/')->with('success', '');
+        } catch (\Throwable $th) {
+            return redirect()->route('pay', $req->deskid)->with('err', '');
         }
     }
 }

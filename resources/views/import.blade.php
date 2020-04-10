@@ -100,6 +100,7 @@
         <div class="card-title ribbon ribbon-primary"><div class="glow"></div>Quản lý Nhập kho nguyên liệu</div>
         <div class="row">
             <div class="col-12">
+                @if($mas->count()>0 && $supps->count()>0)
                 <div class="row">
                     <form class="form-inline col-md-11" action="{{route('import')}}" method="POST">
                         {{csrf_field()}}
@@ -159,6 +160,19 @@
                         </tbody>
                     </table>
                 </div>
+                @elseif($mas->count()==0)
+                <div class="text-center">
+                    <p>Chưa có nguyên liệu nào trong cửa hàng được thiết lập.</p>
+                    <p>Vui lòng thêm nguyên liệu vào cửa hàng và quay lại sau nhé.</p>
+                    <a class="btn btn-primary text-capitalize" href="{{route('material')}}">Thêm nguyên liệu</a>
+                </div>
+                @elseif($supps->count()==0)
+                <div class="text-center">
+                    <p>Chưa có nhà cung cấp nào trong cửa hàng được thiết lập.</p>
+                    <p>Vui lòng thêm nhà cung cấp vào cửa hàng và quay lại sau nhé.</p>
+                    <a class="btn btn-primary text-capitalize" href="{{route('supplier')}}">Thêm nhà cung cấp</a>
+                </div>
+                @endif
             </div>
         </div>
     </div>
@@ -169,8 +183,8 @@
 <div class="modal fade" id="view" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title text-uppercase" id="ModalLabel">Chi tiết phiếu nhập</h5>
+            <div class="modal-header bg-dark">
+                <h5 class="modal-title text-uppercase" id="ModalLabel"><i class="mdi mdi-eye-outline mr-1"></i>Chi tiết phiếu nhập</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -212,8 +226,8 @@
                     {{csrf_field()}}
                     <input type="hidden" name="idimpdel" id="idimpdel">
                     <div class="confirm">
-                        <button type="button" class="btn btn-primary btn-rounded" data-dismiss="modal">Hủy</button>
-                        <button class="btn btn-danger btn-rounded" type="submit">Xóa</button>
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Hủy</button>
+                        <button class="btn btn-danger" type="submit">Xóa</button>
                     </div>
                 </form>
             </div>

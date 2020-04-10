@@ -84,7 +84,7 @@
             '<input type="text" class="form-control form-control-sm bg-white text-capitalize" id="impunit" readonly>' +
             '</td>' +
             '<td>' +
-            '<input type="number" class="form-control form-control-sm" id="impamount" name="impamount[]" required min="1" max="1000000">' +
+            '<input type="number" class="form-control form-control-sm" id="impamount" name="impamount[]" required min="0" max="1000000"  step="0.01">' +
             '</td>' +
             '<td>' +
             '<input type="number" class="form-control form-control-sm" id="impprice" name="impprice[]" required min="1" max="1000000000">' +
@@ -169,7 +169,7 @@
                                         <input type="text" class="form-control form-control-sm bg-white text-capitalize" id="impunit" readonly value="{{$impde->unit}}">
                                     </td>
                                     <td>
-                                        <input type="number" class="form-control form-control-sm" id="impamount" name="impamount[]" required value="{{$impde->impamount}}" min="1" max="1000000">
+                                        <input type="number" class="form-control form-control-sm" id="impamount" name="impamount[]" required value="{{$impde->impamount}}" min="0" max="1000000"  step="0.01">
                                     </td>
                                     <td>
                                         <input type="number" class="form-control form-control-sm" id="impprice" name="impprice[]" required value="{{$impde->impprice}}" min="1" max="1000000000">
@@ -197,7 +197,7 @@
                     </fieldset>
                 </div>
                 <div>
-                    <button class="btn btn-success btn-icon-text float-right ml-2" type="submit"><i class="mdi mdi-content-save btn-icon-prepend"></i>Lưu</button>
+                    <button class="btn btn-info btn-icon-text float-right ml-2" type="submit"><i class="mdi mdi-content-save btn-icon-prepend"></i>Lưu</button>
                     <a href="{{route('import')}}" class="btn btn-secondary btn-icon-text float-right"><i class="mdi mdi-cancel btn-icon-prepend"></i>Hủy</a>
                 </div>
             </form>

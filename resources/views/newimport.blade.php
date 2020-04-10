@@ -84,7 +84,7 @@
             '<input type="text" class="form-control form-control-sm bg-white text-capitalize" id="impunit" readonly>' +
             '</td>' +
             '<td>' +
-            '<input type="number" class="form-control form-control-sm" id="impamount" name="impamount[]" required min="1" max="1000000">' +
+            '<input type="number" class="form-control form-control-sm" id="impamount" name="impamount[]" required min="0" max="1000000" step="0.01">' +
             '</td>' +
             '<td>' +
             '<input type="number" class="form-control form-control-sm" id="impprice" name="impprice[]" required min="1" max="1000000000">' +
@@ -150,7 +150,7 @@
                                     <th class="text-center">Số lượng</th>
                                     <th class="text-center">Đơn giá</th>
                                     <th class="text-center">Thành tiền</th>
-                                    <th class="text-center"><a id="add" class="btn btn-info btn-sm text-white"><i class="mdi mdi-plus ml-0"></i></a></th>
+                                    <th class="text-center"><a id="add" class="btn btn-success btn-sm text-white"><i class="mdi mdi-plus ml-0"></i></a></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -167,7 +167,7 @@
                                         <input type="text" class="form-control form-control-sm bg-white text-capitalize" id="impunit" readonly>
                                     </td>
                                     <td>
-                                        <input type="number" class="form-control form-control-sm" id="impamount" name="impamount[]" required min="1" max="1000000">
+                                        <input type="number" class="form-control form-control-sm" id="impamount" name="impamount[]" required min="0" max="1000000" step="0.01">
                                     </td>
                                     <td>
                                         <input type="number" class="form-control form-control-sm" id="impprice" name="impprice[]" required min="1" max="1000000000">

@@ -15,9 +15,25 @@ Route::post('login', 'Controller@postLogin')->name('login');
 Route::get('register', 'Controller@getRegister')->name('register');
 Route::post('register', 'Controller@postRegister')->name('register');
 Route::group(['middleware' => 'CheckLogin'], function () {
-    Route::get('/', function () {
-        return view('dashboard');
-    })->name('/');
+    Route::get('/', 'Controller@getSell')->name('/');
+    Route::get('new/table/{id}', 'Controller@getNewCall')->name('new-call');
+    Route::post('new/table/{id}', 'Controller@postNewCall')->name('new-call');
+    Route::get('edit/table/{id}', 'Controller@getEditCall')->name('edit-call');
+    Route::post('edit/table/{id}', 'Controller@postEditCall')->name('edit-call');
+    Route::post('delete-call', 'Controller@postDeleteCall')->name('delete-call');
+    Route::get('pay/{id}', 'Controller@getPay')->name('pay');
+    Route::post('pay/{id}', 'Controller@postPay')->name('pay');
+    Route::get('print/{deskid}/{voucherid}', 'Controller@getPrint')->name('print');
+    Route::post('merge', 'Controller@postMerge')->name('merge');
+
+    Route::get('find-voucher', 'Controller@getFindVoucher')->name('find-voucher');
+    Route::get('find-desk', 'Controller@getFindDesk')->name('find-desk');
+    Route::get('find-cate', 'Controller@getFindCate')->name('find-cate');
+    Route::get('find-pro-price', 'Controller@getFindProPrice')->name('find-pro-price');
+    Route::get('check', 'Controller@getCheck')->name('check');
+    Route::get('check-edit', 'Controller@getCheckEdit')->name('check-edit');
+    Route::get('view-menu', 'Controller@getViewMenu')->name('view-menu');
+
     Route::get('logout', 'Controller@getLogout')->name('logout');
 
     Route::get('employee', 'Controller@getEmployee')->name('employee');

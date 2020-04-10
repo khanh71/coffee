@@ -110,7 +110,7 @@
                             <tr @if($material->maamount==0) class="text-danger" @endif>
                                 <td>{{$key+1}}</td>
                                 <td>{{$material->maname}}</td>
-                                <td>{{number_format($material->maamount)}}</td>
+                                <td>{{$material->maamount}}</td>
                                 <td>{{number_format($material->maprice).'₫'}}</td>
                                 <td>{{$material->unit}}</td>
                                 <td>
@@ -138,8 +138,8 @@
 <div class="modal fade" id="new" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title text-uppercase" id="ModalLabel">Thêm nguyên liệu</h5>
+            <div class="modal-header bg-success">
+                <h5 class="modal-title text-uppercase" id="ModalLabel"><i class="mdi mdi-plus-box-outline mr-1"></i>Thêm nguyên liệu</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -168,8 +168,8 @@
                         <input type="text" class="form-control text-capitalize" id="unit" name="unit" required maxlength="50" value="{{old('unit')}}">
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-success btn-rounded btn-icon-text" type="submit"><i class="mdi mdi-content-save btn-icon-prepend"></i>Lưu</button>
-                        <button type="button" class="btn btn-light btn-rounded" data-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Hủy</button>
+                        <button class="btn btn-success btn-icon-text" type="submit"><i class="mdi mdi-content-save btn-icon-prepend"></i>Lưu</button>
                     </div>
                 </form>
             </div>
@@ -182,8 +182,8 @@
 <div class="modal fade" id="edit" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title text-uppercase" id="ModalLabel">Sửa nguyên liệu</h5>
+            <div class="modal-header bg-info">
+                <h5 class="modal-title text-uppercase" id="ModalLabel"><i class="mdi mdi-pencil-box-outline mr-1"></i>Sửa nguyên liệu</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -217,8 +217,8 @@
                         <input type="text" class="form-control text-capitalize" id="unitedit" name="unitedit" required maxlength="50" value="{{old('unitedit')}}">
                     </div>
                     <div class="modal-footer">
-                        <button class="btn btn-success btn-rounded btn-icon-text" type="submit"><i class="mdi mdi-content-save btn-icon-prepend"></i>Lưu</button>
-                        <button type="button" class="btn btn-light btn-rounded" data-dismiss="modal">Hủy</button>
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Hủy</button>
+                        <button class="btn btn-info btn-icon-text" type="submit"><i class="mdi mdi-content-save btn-icon-prepend"></i>Lưu</button>
                     </div>
                 </form>
             </div>
@@ -242,8 +242,8 @@
                     {{csrf_field()}}
                     <input type="hidden" name="idmadel" id="idmadel">
                     <div class="confirm">
-                        <button type="button" class="btn btn-primary btn-rounded" data-dismiss="modal">Hủy</button>
-                        <button class="btn btn-danger btn-rounded" type="submit">Xóa</button>
+                        <button type="button" class="btn btn-light" data-dismiss="modal">Hủy</button>
+                        <button class="btn btn-danger" type="submit">Xóa</button>
                     </div>
                 </form>
             </div>

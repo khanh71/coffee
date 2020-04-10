@@ -1,5 +1,5 @@
 @extends('app')
-@section('title','Thêm Thực đơn')
+@section('title','Thêm Món')
 @section('css')
 <link rel="stylesheet" href="{{asset('vendors/datatables.net-bs4/dataTables.bootstrap4.css')}}">
 <link rel="stylesheet" href="{{asset('vendors/jquery-toast-plugin/jquery.toast.min.css')}}">
@@ -64,7 +64,7 @@
             '<input type="text" class="form-control form-control-sm bg-white text-capitalize" id="impunit" readonly>' +
             '</td>' +
             '<td>' +
-            '<input type="number" class="form-control form-control-sm" id="number" name="number[]" required min="0" max="1000000">' +
+            '<input type="number" class="form-control form-control-sm" id="number" name="number[]" required min="0" max="1000000" step="0.01">' +
             '</td>' +
             '<td class="text-center">' +
             '<a id="remove" class="btn btn-danger btn-sm text-white"><i class="mdi mdi-delete ml-0"></i></a>' +
@@ -79,7 +79,7 @@
 <!--list of import-->
 <div class="card">
     <div class="card-body">
-        <div class="card-title ribbon ribbon-success"><div class="glow"></div>Thêm thực đơn</div>
+        <div class="card-title ribbon ribbon-success"><div class="glow"></div>Thêm món</div>
         <div class="row">
             <form class="col-12" id="newProductForm" method="post" action="{{route('new-product')}}">
                 @if(count($errors->postNewProduct_Error)>0)
@@ -91,11 +91,17 @@
                 @endforeach
                 @endif
                 {{csrf_field()}}
+                @if(Session::has('dupp'))
+                <div class="alert alert-fill-danger" role="alert">
+                    <i class="mdi mdi-information-outline"></i>
+                    {{Session::get('dupp')}}
+                </div>
+                @endif
                 <div class="mb-3">
                     <fieldset>
-                        <legend>Thông tin thực đơn</legend>
+                        <legend>Thông tin món</legend>
                         <div class="form-group">
-                            <label><b>Danh mục:</b></label>
+                            <label><b>Thực đơn:</b></label>
                             <select class="form-control form-control-md text-capitalize" id="idprocate" name="idprocate" value="{{old('idprocate')}}">
                                 @foreach($procates as $procate)
                                 <option value="{{$procate->idprocate}}">{{$procate->procatename}}</option>
@@ -103,7 +109,7 @@
                             </select>
                         </div>
                         <div class="form-group">
-                            <label><b>Tên thực đơn:</b></label>
+                            <label><b>Tên món:</b></label>
                             <input type="text" class="form-control text-capitalize" id="proname" name="proname" value="{{old('proname')}}" required maxlength="100">
                         </div>
                         <div class="form-group">
@@ -113,6 +119,7 @@
                     </fieldset>
 
                 </div>
+                <div class="mb-2"><b>Lưu ý: </b>Mỗi nguyên liệu chỉ được nhập 1 hàng.</div>
                 <div class="table-responsive mb-3 text-left">
                     <fieldset>
                         <legend>Công thức</legend>
@@ -122,7 +129,7 @@
                                     <th class="text-center">Nguyên liệu</th>
                                     <th class="text-center">ĐVT</th>
                                     <th class="text-center">Số lượng</th>
-                                    <th class="text-center"><a id="add" class="btn btn-info btn-sm text-white"><i class="mdi mdi-plus ml-0"></i></a></th>
+                                    <th class="text-center"><a id="add" class="btn btn-success btn-sm text-white"><i class="mdi mdi-plus ml-0"></i></a></th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -139,7 +146,7 @@
                                         <input type="text" class="form-control form-control-sm bg-white text-capitalize" id="impunit" readonly>
                                     </td>
                                     <td>
-                                        <input type="number" class="form-control form-control-sm" id="number" name="number[]" required min="0" max="1000000">
+                                        <input type="number" class="form-control form-control-sm" id="number" name="number[]" required min="0" max="1000000" step="0.01">
                                     </td>
                                     <td class="text-center">
                                         <a id="remove" class="btn btn-danger btn-sm text-white"><i class="mdi mdi-delete ml-0"></i></a>
