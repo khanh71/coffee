@@ -91,7 +91,7 @@
                             </span>
                         </div>
                     </form>
-                    <div class="col-md-1 text-right"><button class="btn btn-success btn-icon btn-rounded" data-toggle="modal" data-target="#new"><i class="mdi mdi-plus"></i></button></div>
+                    <div class="col-md-1 text-right"><button class="btn btn-success btn-icon btn-rounded" @can('supplier.create') data-toggle="modal" data-target="#new" @else disabled @endcan><i class="mdi mdi-plus"></i></button></div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover">
@@ -113,10 +113,10 @@
                                 <td>{{$supplier->suppaddress}}</td>
                                 <td>{{$supplier->suppphone}}</td>
                                 <td>
-                                    <button class="btn btn-info btn-rounded btn-icon" data-idsupp="{{$supplier->idsupp}}" data-suppname="{{$supplier->suppname}}" data-suppaddress="{{$supplier->suppaddress}}" data-suppphone="{{$supplier->suppphone}}" data-toggle="modal" data-target="#edit"><i class="mdi mdi-pencil"></i></button>
+                                    <button class="btn btn-info btn-rounded btn-icon" @can('supplier.update') data-idsupp="{{$supplier->idsupp}}" data-suppname="{{$supplier->suppname}}" data-suppaddress="{{$supplier->suppaddress}}" data-suppphone="{{$supplier->suppphone}}" data-toggle="modal" data-target="#edit" @else disabled @endcan><i class="mdi mdi-pencil"></i></button>
                                 </td>
                                 <td>
-                                    <button class="btn btn-icon btn-rounded btn-danger" data-idsupp="{{$supplier->idsupp}}" data-toggle="modal" data-target="#delete"><i class="mdi mdi-delete-forever"></i></button>
+                                    <button class="btn btn-icon btn-rounded btn-danger" @can('supplier.delete') data-idsupp="{{$supplier->idsupp}}" data-toggle="modal" data-target="#delete" @else disabled @endcan><i class="mdi mdi-delete-forever"></i></button>
                                 </td>
                             </tr>
                             @empty

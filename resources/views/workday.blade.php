@@ -123,7 +123,7 @@
                         </div>
                         <button type="submit" class="btn btn-icon-text btn-primary"><i class="mdi mdi-magnify btn-icon-prepend"></i>Tìm Kiếm</button>
                     </form>
-                    <div class="col-md-1 text-right"><button class="btn btn-success btn-icon btn-rounded" data-toggle="modal" data-target="#new"><i class="mdi mdi-plus"></i></button></div>
+                    <div class="col-md-1 text-right"><button class="btn btn-success btn-icon btn-rounded" @can('workday.create') data-toggle="modal" data-target="#new" @else disabled @endcan><i class="mdi mdi-plus"></i></button></div>
                 </div>
                 <div class="table-responsive mt-3">
                     <table class="table table-hover">
@@ -146,10 +146,10 @@
                                 <td>{{$wd->name}}</td>
                                 <td>{{$wd->hour}}</td>
                                 <td>
-                                    <button class="btn btn-info btn-rounded btn-icon" data-idwd="{{$wd->idwd}}" data-hour="{{$wd->hour}}" data-name="{{$wd->name}}" data-toggle="modal" data-target="#edit"><i class="mdi mdi-pencil"></i></button>
+                                    <button class="btn btn-info btn-rounded btn-icon" @can('workday.update') data-idwd="{{$wd->idwd}}" data-hour="{{$wd->hour}}" data-name="{{$wd->name}}" data-toggle="modal" data-target="#edit" @else disabled @endcan><i class="mdi mdi-pencil"></i></button>
                                 </td>
                                 <td>
-                                    <button class="btn btn-icon btn-rounded btn-danger" data-idwd="{{$wd->idwd}}" data-toggle="modal" data-target="#delete"><i class="mdi mdi-delete-forever"></i></button>
+                                    <button class="btn btn-icon btn-rounded btn-danger" @can('workday.delete') data-idwd="{{$wd->idwd}}" data-toggle="modal" data-target="#delete" @else disabled @endcan><i class="mdi mdi-delete-forever"></i></button>
                                 </td>
                             </tr>
                             @else

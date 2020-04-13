@@ -28,82 +28,106 @@
                     <p>Bán Hàng</p>
                     <span></span>
                 </li>
-                <li class="nav-item @if(Request::segment(1)=='')active @endif">
-                    <a class="nav-link" href="{{route('/')}}">
+                @can('sell.view')
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('sell')}}">
                         <i class="mdi mdi-square-inc-cash menu-icon"></i>
                         <span class="menu-title">Bán Hàng</span>
                     </a>
                 </li>
+                @endcan
                 <li class="nav-item sidebar-category">
                     <p>Quản Lý</p>
                     <span></span>
                 </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="{{route('employee')}}">
-                        <i class="mdi mdi-account menu-icon"></i>
-                        <span class="menu-title">Quản Lý Nhân Viên</span>
-                    </a>
-                </li>
+                @can('position.view')
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('position')}}">
                         <i class="mdi mdi-briefcase menu-icon"></i>
                         <span class="menu-title">Quản Lý Chức Vụ</span>
                     </a>
                 </li>
+                @endcan
+                @can('employee.view')
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('employee')}}">
+                        <i class="mdi mdi-account menu-icon"></i>
+                        <span class="menu-title">Quản Lý Nhân Viên</span>
+                    </a>
+                </li>
+                @endcan
+                @can('zone.view')
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('zone')}}">
                         <i class="mdi mdi-nature-people menu-icon"></i>
                         <span class="menu-title">Quản Lý Khu Vực</span>
                     </a>
                 </li>
+                @endcan
+                @can('desk.view')
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('desk')}}">
                         <i class="mdi mdi-sofa menu-icon"></i>
                         <span class="menu-title">Quản Lý Bàn</span>
                     </a>
                 </li>
+                @endcan
+                @can('supplier.view')
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('supplier')}}">
                         <i class="mdi mdi-truck menu-icon"></i>
                         <span class="menu-title">Quản Lý Nhà Cung Cấp</span>
                     </a>
                 </li>
+                @endcan
+                @can('material.view')
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('material')}}">
                         <i class="mdi mdi-shape-plus menu-icon"></i>
                         <span class="menu-title">Quản Lý Nguyên Liệu</span>
                     </a>
                 </li>
+                @endcan
+                @can('import.view')
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('import')}}">
                         <i class="mdi mdi-import menu-icon"></i>
                         <span class="menu-title">Quản Lý Nhập Kho</span>
                     </a>
                 </li>
+                @endcan
+                @can('productcate.view')
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('category')}}">
                         <i class="mdi mdi-buffer menu-icon"></i>
                         <span class="menu-title">Quản Lý Thực Đơn</span>
                     </a>
                 </li>
+                @endcan
+                @can('product.view')
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('product')}}">
                         <i class="mdi mdi-food menu-icon"></i>
                         <span class="menu-title">Quản Lý Món</span>
                     </a>
                 </li>
+                @endcan
+                @can('voucher.view')
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('voucher')}}">
                         <i class="mdi mdi-sale menu-icon"></i>
                         <span class="menu-title">Quản Lý Khuyến Mãi</span>
                     </a>
                 </li>
+                @endcan
+                @can('workday.view')
                 <li class="nav-item">
                     <a class="nav-link" href="{{route('workday')}}">
                         <i class="mdi mdi-calendar-clock menu-icon"></i>
                         <span class="menu-title">Quản Lý Chấm Công</span>
                     </a>
                 </li>
+                @endcan
                 <li class="nav-item sidebar-category">
                     <p>Báo Cáo</p>
                     <span></span>

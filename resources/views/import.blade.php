@@ -120,7 +120,7 @@
                         </div>
                         <button type="submit" class="btn btn-icon-text btn-primary"><i class="mdi mdi-magnify btn-icon-prepend"></i>Tìm Kiếm</button>
                     </form>
-                    <div class="col-md-1 text-right"><a href="{{route('new-import')}}"><button class="btn btn-success btn-icon btn-rounded"><i class="mdi mdi-plus"></i></button></a></div>
+                    <div class="col-md-1 text-right">@can('import.create')<a href="{{route('new-import')}}"><button class="btn btn-success btn-icon btn-rounded"><i class="mdi mdi-plus"></i></button></a>@else <button class="btn btn-success btn-icon btn-rounded" disabled><i class="mdi mdi-plus"></i></button> @endcan</div>
                 </div>
                 <div class="table-responsive mt-3">
                     <table class="table table-hover">
@@ -146,10 +146,10 @@
                                     <button class="btn btn-dark btn-rounded btn-icon" data-idimp="{{$imp->idimp}}" data-toggle="modal" data-target="#view"><i class="mdi mdi-eye"></i></button>
                                 </td>
                                 <td>
-                                    <a href="{{route('edit-import',$imp->idimp)}}"><button class="btn btn-info btn-rounded btn-icon"><i class="mdi mdi-pencil"></i></button></a>
+                                    @can('import.update')<a href="{{route('edit-import',$imp->idimp)}}"><button class="btn btn-info btn-rounded btn-icon"><i class="mdi mdi-pencil"></i></button></a>@else <button class="btn btn-info btn-rounded btn-icon" disabled><i class="mdi mdi-pencil"></i></button> @endcan
                                 </td>
                                 <td>
-                                    <button class="btn btn-icon btn-rounded btn-danger" data-idimp="{{$imp->idimp}}" data-toggle="modal" data-target="#delete"><i class="mdi mdi-delete-forever"></i></button>
+                                    <button class="btn btn-icon btn-rounded btn-danger" @can('import.delete') data-idimp="{{$imp->idimp}}" data-toggle="modal" data-target="#delete" @else disabled @endcan><i class="mdi mdi-delete-forever"></i></button>
                                 </td>
                             </tr>
                             @empty

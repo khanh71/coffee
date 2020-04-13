@@ -90,7 +90,7 @@
                             </span>
                         </div>
                     </form>
-                    <div class="col-md-1 text-right"><a href="{{route('new-product')}}"><button class="btn btn-success btn-icon btn-rounded"><i class="mdi mdi-plus"></i></button></a></div>
+                    <div class="col-md-1 text-right">@can('product.create')<a href="{{route('new-product')}}"><button class="btn btn-success btn-icon btn-rounded"><i class="mdi mdi-plus"></i></button></a>@else <button class="btn btn-success btn-icon btn-rounded" disabled><i class="mdi mdi-plus"></i></button>@endcan</div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover">
@@ -116,10 +116,10 @@
                                     <button class="btn btn-dark btn-rounded btn-icon" data-idpro="{{$pro->idpro}}" data-toggle="modal" data-target="#view"><i class="mdi mdi-eye"></i></button>
                                 </td>
                                 <td>
-                                    <a href="{{route('edit-product',$pro->idpro)}}"><button class="btn btn-info btn-rounded btn-icon"><i class="mdi mdi-pencil"></i></button></a>
+                                    @can('product.update')<a href="{{route('edit-product',$pro->idpro)}}"><button class="btn btn-info btn-rounded btn-icon"><i class="mdi mdi-pencil"></i></button></a>@else <button class="btn btn-info btn-rounded btn-icon" disabled><i class="mdi mdi-pencil"></i></button>@endcan
                                 </td>
                                 <td>
-                                    <button class="btn btn-icon btn-rounded btn-danger" data-idpro="{{$pro->idpro}}" data-toggle="modal" data-target="#delete"><i class="mdi mdi-delete-forever"></i></button>
+                                    <button class="btn btn-icon btn-rounded btn-danger" @can('import.delete') data-idpro="{{$pro->idpro}}" data-toggle="modal" data-target="#delete" @else disabled @endcan><i class="mdi mdi-delete-forever"></i></button>
                                 </td>
                             </tr>
                             @empty

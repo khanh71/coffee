@@ -84,7 +84,7 @@
                             </span>
                         </div>
                     </form>
-                    <div class="col-md-1 text-right"><button class="btn btn-success btn-icon btn-rounded" data-toggle="modal" data-target="#new"><i class="mdi mdi-plus"></i></button></div>
+                    <div class="col-md-1 text-right"><button class="btn btn-success btn-icon btn-rounded" @can('productcate.create') data-toggle="modal" data-target="#new" @else disabled @endcan><i class="mdi mdi-plus"></i></button></div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover">
@@ -102,10 +102,10 @@
                                 <td>{{$key+1}}</td>
                                 <td>{{$procate->procatename}}</td>
                                 <td>
-                                    <button class="btn btn-info btn-rounded btn-icon" data-idprocate="{{$procate->idprocate}}" data-procatename="{{$procate->procatename}}" data-toggle="modal" data-target="#edit"><i class="mdi mdi-pencil"></i></button>
+                                    <button class="btn btn-info btn-rounded btn-icon" @can('productcate.update') data-idprocate="{{$procate->idprocate}}" data-procatename="{{$procate->procatename}}" data-toggle="modal" data-target="#edit" @else disabled @endcan><i class="mdi mdi-pencil"></i></button>
                                 </td>
                                 <td>
-                                    <button class="btn btn-icon btn-rounded btn-danger" data-idprocate="{{$procate->idprocate}}" data-toggle="modal" data-target="#delete"><i class="mdi mdi-delete-forever"></i></button>
+                                    <button class="btn btn-icon btn-rounded btn-danger" @can('productcate.delete') data-idprocate="{{$procate->idprocate}}" data-toggle="modal" data-target="#delete" @else disabled @endcan><i class="mdi mdi-delete-forever"></i></button>
                                 </td>
                             </tr>
                             @empty

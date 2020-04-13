@@ -102,7 +102,7 @@
                             </span>
                         </div>
                     </form>
-                    <div class="col-md-1 text-right"><button class="btn btn-success btn-icon btn-rounded" data-toggle="modal" data-target="#new"><i class="mdi mdi-plus"></i></button></div>
+                    <div class="col-md-1 text-right"><button class="btn btn-success btn-icon btn-rounded" @can('employee.create') data-toggle="modal" data-target="#new" @else disabled @endcan><i class="mdi mdi-plus"></i></button></div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover">
@@ -132,10 +132,10 @@
                                 <td>{{$emp->posname}}</td>
                                 <td>{{number_format($emp->basesalary).'₫'}}</td>
                                 <td>
-                                    <button class="btn btn-info btn-rounded btn-icon" data-toggle="modal" data-iduser="{{$emp->id}}" data-name="{{$emp->name}}" data-address="{{$emp->address}}" data-birthday="{{$emp->birthday}}" data-phone="{{$emp->phone}}" data-startday="{{$emp->startday}}" data-idposition="{{$emp->posid}}" data-basesalary="{{$emp->basesalary}}" data-target="#edit"><i class="mdi mdi-pencil"></i></button>
+                                    <button class="btn btn-info btn-rounded btn-icon" @can('employee.update') data-toggle="modal" data-iduser="{{$emp->id}}" data-name="{{$emp->name}}" data-address="{{$emp->address}}" data-birthday="{{$emp->birthday}}" data-phone="{{$emp->phone}}" data-startday="{{$emp->startday}}" data-idposition="{{$emp->position_idpos}}" data-basesalary="{{$emp->basesalary}}" data-target="#edit" @else disabled @endcan><i class="mdi mdi-pencil"></i></button>
                                 </td>
                                 <td>
-                                    <button class="btn btn-icon btn-rounded btn-danger" data-toggle="modal" data-iduser="{{$emp->id}}" data-target="#delete"><i class="mdi mdi-delete-forever"></i></button>
+                                    <button class="btn btn-icon btn-rounded btn-danger" @can('employee.delete') data-toggle="modal" data-iduser="{{$emp->id}}" data-target="#delete" @else disabled @endcan><i class="mdi mdi-delete-forever"></i></button>
                                 </td>
                             </tr>
                             @empty

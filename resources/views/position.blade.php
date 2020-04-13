@@ -95,6 +95,7 @@
                                 <th>STT</th>
                                 <th>Tên chức vụ</th>
                                 <th>Hệ số lương</th>
+                                <th>Phân quyền</th>
                                 <th>Sửa</th>
                                 <th>Xóa</th>
                             </tr>
@@ -105,6 +106,9 @@
                                 <td>{{$key+1}}</td>
                                 <td>{{$pos->posname}}</td>
                                 <td>{{$pos->coefficient}}</td>
+                                <td>
+                                    @can('position.role')<a href="{{route('role',$pos->idpos)}}"><button class="btn btn-warning btn-rounded btn-icon"><i class="mdi mdi-key"></i></button></a>@else <button class="btn btn-warning btn-rounded btn-icon" disabled><i class="mdi mdi-key"></i></button> @endcan
+                                </td>
                                 <td>
                                     <button class="btn btn-info btn-rounded btn-icon" data-idpos="{{$pos->idpos}}" data-posname="{{$pos->posname}}" data-coefficient="{{$pos->coefficient}}" data-toggle="modal" data-target="#edit"><i class="mdi mdi-pencil"></i></button>
                                 </td>

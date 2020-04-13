@@ -90,7 +90,7 @@
                             </span>
                         </div>
                     </form>
-                    <div class="col-md-1 text-right"><button class="btn btn-success btn-icon btn-rounded" data-toggle="modal" data-target="#new"><i class="mdi mdi-plus"></i></button></div>
+                    <div class="col-md-1 text-right"><button class="btn btn-success btn-icon btn-rounded" @can('material.create') data-toggle="modal" data-target="#new" @else disabled @endcan><i class="mdi mdi-plus"></i></button></div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover">
@@ -114,10 +114,10 @@
                                 <td>{{number_format($material->maprice).'₫'}}</td>
                                 <td>{{$material->unit}}</td>
                                 <td>
-                                    <button class="btn btn-info btn-rounded btn-icon" data-idma="{{$material->idma}}" data-maname="{{$material->maname}}" data-maname="{{$material->maname}}" data-maamount="{{$material->maamount}}" data-maprice="{{$material->maprice}}" data-unit="{{$material->unit}}" data-toggle="modal" data-target="#edit"><i class="mdi mdi-pencil"></i></button>
+                                    <button class="btn btn-info btn-rounded btn-icon" @can('material.update') data-idma="{{$material->idma}}" data-maname="{{$material->maname}}" data-maname="{{$material->maname}}" data-maamount="{{$material->maamount}}" data-maprice="{{$material->maprice}}" data-unit="{{$material->unit}}" data-toggle="modal" data-target="#edit" @else disabled @endcan><i class="mdi mdi-pencil"></i></button>
                                 </td>
                                 <td>
-                                    <button class="btn btn-icon btn-rounded btn-danger" data-idma="{{$material->idma}}" data-toggle="modal" data-target="#delete"><i class="mdi mdi-delete-forever"></i></button>
+                                    <button class="btn btn-icon btn-rounded btn-danger" @can('material.delete') data-idma="{{$material->idma}}" data-toggle="modal" data-target="#delete" @else disabled @endcan><i class="mdi mdi-delete-forever"></i></button>
                                 </td>
                             </tr>
                             @empty

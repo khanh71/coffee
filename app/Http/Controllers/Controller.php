@@ -9,6 +9,7 @@ use App\Formula;
 use App\Import;
 use App\ImportDetail;
 use App\Material;
+use App\Permission;
 use Illuminate\Foundation\Auth\Access\AuthorizesRequests;
 use Illuminate\Foundation\Bus\DispatchesJobs;
 use Illuminate\Foundation\Validation\ValidatesRequests;
@@ -32,6 +33,12 @@ use stdClass;
 class Controller extends BaseController
 {
     use AuthorizesRequests, DispatchesJobs, ValidatesRequests;
+
+    public function getDashboard()
+    {
+        return view('dashboard');
+    }
+
     public function getLogin()
     {
         if (Auth::check()) {
@@ -96,14 +103,34 @@ class Controller extends BaseController
             $shop = new Shop;
             $user = new User;
             $pos = new Position;
+            $per = new Permission;
+            $perarr = ['position', 'employee', 'zone', 'desk', 'supplier', 'material', 'import', 'productcate', 'product', 'voucher', 'workday', 'sell'];
+            $permission = [];
 
             $shop->shopname = $req->shopname;
             $shop->shopaddress = $req->shopaddress;
             $shop->save();
 
+
+            foreach ($perarr as $arr) {
+                if ($arr == 'sell') {
+                    $permission[$arr . '.view'] = true;
+                    $permission[$arr . '.create'] = true;
+                    $permission[$arr . '.delete'] = true;
+                    $permission[$arr . '.pay'] = true;
+                    $permission[$arr . '.merge'] = true;
+                } else {
+                    $permission[$arr . '.view'] = true;
+                    $permission[$arr . '.create'] = true;
+                    $permission[$arr . '.update'] = true;
+                    $permission[$arr . '.delete'] = true;
+                }
+            }
+            $permission['position.role'] = true;
             $pos->posname = 'Admin';
             $pos->coefficient = '0';
             $pos->shopid = $shop->idshop;
+            $pos->permissions = $permission;
             $pos->save();
 
             $user->email = $req->email;
@@ -114,9 +141,12 @@ class Controller extends BaseController
             $user->phone = $req->phone;
             $user->startday = Carbon::now()->format('d/m/Y');
             $user->basesalary = 0;
-            $user->posid = $pos->idpos;
             $user->shopid = $shop->idshop;
             $user->save();
+
+            $per->user_id = $user->id;
+            $per->position_idpos = $pos->idpos;
+            $per->save();
 
             return view('login')->with('message', 'Tạo tài khoản thành công!!');
         } catch (\Throwable $th) {
@@ -162,10 +192,28 @@ class Controller extends BaseController
         }
 
         try {
+            $perarr = ['position', 'employee', 'zone', 'desk', 'supplier', 'material', 'import', 'productcate', 'product', 'voucher', 'workday', 'sell'];
+            $permission = [];
+            foreach ($perarr as $arr) {
+                if ($arr == 'sell') {
+                    $permission[$arr . '.view'] = false;
+                    $permission[$arr . '.create'] = false;
+                    $permission[$arr . '.delete'] = false;
+                    $permission[$arr . '.pay'] = false;
+                    $permission[$arr . '.merge'] = false;
+                } else {
+                    $permission[$arr . '.view'] = false;
+                    $permission[$arr . '.create'] = false;
+                    $permission[$arr . '.update'] = false;
+                    $permission[$arr . '.delete'] = false;
+                }
+            }
+            $permission['position.role'] = false;
             $pos = new Position;
             $pos->posname = $req->posname;
             $pos->coefficient = $req->coefficient;
             $pos->shopid = Auth::user()->shopid;
+            $pos->permissions = $permission;
             $pos->save();
             return redirect()->back()->with('success', '');
         } catch (\Throwable $th) {
@@ -211,8 +259,8 @@ class Controller extends BaseController
     public function postDeletePosition(Request $req)
     {
         $pos = Position::where('idpos', $req->idposdel)->first();
-        $user = User::where('posid', $pos->idpos)->get();
-        if ($user->count() == 0) {
+        $per = Permission::where('position_idpos', $pos->idpos)->get();
+        if ($per->count() == 0) {
             $pos->delete();
             return redirect()->back()->with('succ', '');
         } else return redirect()->back()->with('error', '');
@@ -220,8 +268,11 @@ class Controller extends BaseController
 
     public function getEmployee(Request $req)
     {
-        $employees = User::join('position', 'position.idpos', '=', 'users.posid')
-            ->where('users.shopid', Auth::user()->shopid)->where('name', 'like', '%' . $req->search . '%')->paginate(30);
+        $temp = User::join('permission', 'permission.user_id', 'users.id')
+            ->where('users.shopid', Auth::user()->shopid)->where('name', 'like', '%' . $req->search . '%');
+        $employees = Position::joinSub($temp, 'employ', function ($join) {
+            $join->on('position.idpos', 'employ.position_idpos');
+        })->paginate(30);
         $positions = Position::where('shopid', Auth::user()->shopid)->get();
 
         $characters = '0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ';
@@ -282,9 +333,13 @@ class Controller extends BaseController
             $user->phone = $req->phone;
             $user->startday = $req->startday;
             $user->basesalary = $salary;
-            $user->posid = $req->idpos;
             $user->shopid = Auth::user()->shopid;
             $user->save();
+
+            $per = new Permission;
+            $per->position_idpos = $req->idpos;
+            $per->user_id = $user->id;
+            $per->save();
 
             return redirect()->back()->with('success', '');
         } catch (\Throwable $th) {
@@ -333,8 +388,11 @@ class Controller extends BaseController
             $user->phone = $req->phoneedit;
             $user->startday = $req->startdayedit;
             $user->basesalary = $salary;
-            $user->posid = $req->idposedit;
             $user->update();
+
+            $per = Permission::where('user_id', $user->id)->first();
+            $per->position_idpos = $req->idposedit;
+            $per->update();
 
             return redirect()->back()->with('success', '');
         } catch (\Throwable $th) {
@@ -346,7 +404,10 @@ class Controller extends BaseController
     {
         $user = User::where('id', $req->iduserdel)->first();
         $imp = Import::where('userid', $user->id)->first();
-        if ($imp->count() > 0) {
+        $wd = Workday::where('userid', $user->id)->first();
+        $bill = Bill::where('userid', $user->id)->first();
+        if (!$imp && !$wd && !$bill) {
+            Permission::where('user_id', $user->id)->delete();
             $user->delete();
             return redirect()->back()->with('succ', '');
         } else return redirect()->back()->with('error', '');
@@ -1543,7 +1604,7 @@ class Controller extends BaseController
                         $ma->update();
                     }
                 }
-                return redirect()->route('/')->with('success', '');
+                return redirect()->route('sell')->with('success', '');
             } else
                 return redirect()->route('new-call', $req->deskid)->with('dupp', 'Mỗi món chỉ được nhập 1 dòng');
         } catch (\Throwable $th) {
@@ -1685,7 +1746,7 @@ class Controller extends BaseController
                     }
                     $bde->delete();
                 }
-                return redirect()->route('/')->with('success', '');
+                return redirect()->route('sell')->with('success', '');
             } else
                 return redirect()->route('edit-call', $req->deskid)->with('dupp', 'Mỗi món chỉ được nhập 1 dòng');
         } catch (\Throwable $th) {
@@ -1708,7 +1769,7 @@ class Controller extends BaseController
         }
         $bill->delete();
         Desk::where('iddesk', $req->iddeskdel)->update(['state' => 0]);
-        return redirect()->route('/')->with('success', '');
+        return redirect()->route('sell')->with('success', '');
     }
 
     public function getCheckEdit(Request $req)
@@ -1764,9 +1825,9 @@ class Controller extends BaseController
             $old->total = $old->total + $new->total;
             $old->update();
             $new->delete();
-            return redirect()->route('/')->with('success', '');
+            return redirect()->route('sell')->with('success', '');
         } catch (\Throwable $th) {
-            return redirect()->route('/')->with('err', '');
+            return redirect()->route('sell')->with('err', '');
         }
     }
 
@@ -1823,9 +1884,77 @@ class Controller extends BaseController
             }
             $bill->update();
             Desk::where('iddesk', $req->deskid)->where('shopid', Auth::user()->shopid)->update(['state' => 0]);
-            return redirect()->route('/')->with('success', '');
+            return redirect()->route('sell')->with('success', '');
         } catch (\Throwable $th) {
             return redirect()->route('pay', $req->deskid)->with('err', '');
+        }
+    }
+
+    public function getRole($id)
+    {
+        $pos = Position::where('idpos', $id)->where('shopid', Auth::user()->shopid)->first();
+        return view('role', compact('pos'));
+    }
+
+    public function postRole(Request $req, $id)
+    {
+        try {
+            $pos = Position::where('idpos', $id)->where('shopid', Auth::user()->shopid)->first();
+            $perarr = ['position', 'employee', 'zone', 'desk', 'supplier', 'material', 'import', 'productcate', 'product', 'voucher', 'workday'];
+            $permission = [];
+            foreach ($perarr as $key => $value) {
+                if (!empty($req->view[$key]))
+                    $permission[$value . '.view'] = true;
+                else
+                    $permission[$value . '.view'] = false;
+                if (!empty($req->create[$key]))
+                    $permission[$value . '.create'] = true;
+                else
+                    $permission[$value . '.create'] = false;
+                if (!empty($req->update[$key]))
+                    $permission[$value . '.update'] = true;
+                else
+                    $permission[$value . '.update'] = false;
+                if (!empty($req->delete[$key]))
+                    $permission[$value . '.delete'] = true;
+                else
+                    $permission[$value . '.delete'] = false;
+            }
+            if (!empty($req->role))
+                $permission['position.role'] = true;
+            else
+                $permission['position.role'] = false;
+
+            if (!empty($req->sell_view))
+                $permission['sell.view'] = true;
+            else
+                $permission['sell.view'] = false;
+
+            if (!empty($req->sell_create))
+                $permission['sell.create'] = true;
+            else
+                $permission['sell.create'] = false;
+
+            if (!empty($req->sell_delete))
+                $permission['sell.delete'] = true;
+            else
+                $permission['sell.delete'] = false;
+
+            if (!empty($req->sell_merge))
+                $permission['sell.merge'] = true;
+            else
+                $permission['sell.merge'] = false;
+
+            if (!empty($req->sell_pay))
+                $permission['sell.pay'] = true;
+            else
+                $permission['sell.pay'] = false;
+
+            $pos->permissions = $permission;
+            $pos->update();
+            return redirect()->route('position')->with('success', '');
+        } catch (\Throwable $th) {
+            return redirect()->route('position')->with('err', '');
         }
     }
 }

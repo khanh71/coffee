@@ -105,7 +105,9 @@
 <!--list of import-->
 <div class="card">
     <div class="card-body">
-        <div class="card-title ribbon ribbon-success"><div class="glow"></div>Tạo phiếu nhập kho</div>
+        <div class="card-title ribbon ribbon-success">
+            <div class="glow"></div>Tạo phiếu nhập kho
+        </div>
         <div class="row">
             <form class="col-12" id="newImportForm" method="post" action="{{route('new-import')}}">
                 @if(count($errors->postNewImport_Error)>0)

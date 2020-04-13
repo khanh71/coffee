@@ -122,7 +122,7 @@
                             </span>
                         </div>
                     </form>
-                    <div class="col-md-1 text-right"><button class="btn btn-success btn-icon btn-rounded" data-toggle="modal" data-target="#new"><i class="mdi mdi-plus"></i></button></div>
+                    <div class="col-md-1 text-right"><button class="btn btn-success btn-icon btn-rounded" @can('voucher.create') data-toggle="modal" data-target="#new" @else disabled @endcan><i class="mdi mdi-plus"></i></button></div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover">
@@ -145,10 +145,10 @@
                                 <td>@if($voucher->sale<=100) {{$voucher->sale.'%'}} @else {{number_format($voucher->sale).'₫'}} @endif</td> <td>{{date('d/m/Y',strtotime($voucher->startday))}}</td>
                                 <td>{{date('d/m/Y',strtotime($voucher->endday))}}</td>
                                 <td>
-                                    <button class="btn btn-info btn-rounded btn-icon" data-idvoucher="{{$voucher->idvoucher}}" data-vouchername="{{$voucher->vouchername}}" data-sale="{{$voucher->sale}}" data-startday="{{$voucher->startday}}" data-endday="{{$voucher->endday}}" data-toggle="modal" data-target="#edit"><i class="mdi mdi-pencil"></i></button>
+                                    <button class="btn btn-info btn-rounded btn-icon" @can('voucher.update') data-idvoucher="{{$voucher->idvoucher}}" data-vouchername="{{$voucher->vouchername}}" data-sale="{{$voucher->sale}}" data-startday="{{$voucher->startday}}" data-endday="{{$voucher->endday}}" data-toggle="modal" data-target="#edit" @else disabled @endcan><i class="mdi mdi-pencil"></i></button>
                                 </td>
                                 <td>
-                                    <button class="btn btn-icon btn-rounded btn-danger" data-idvoucher="{{$voucher->idvoucher}}" data-toggle="modal" data-target="#delete"><i class="mdi mdi-delete-forever"></i></button>
+                                    <button class="btn btn-icon btn-rounded btn-danger" @can('voucher.delete') data-idvoucher="{{$voucher->idvoucher}}" data-toggle="modal" data-target="#delete" @else disabled @endcan><i class="mdi mdi-delete-forever"></i></button>
                                 </td>
                             </tr>
                             @empty

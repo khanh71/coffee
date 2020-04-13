@@ -33,7 +33,23 @@ class User extends Authenticatable
      *
      * @var array
      */
-    // protected $casts = [
-    //     'email_verified_at' => 'datetime',
-    // ];
+    protected $casts = [
+        'email_verified_at' => 'datetime',
+    ];
+
+    public function position()
+    {
+        return $this->belongsToMany(Position::class, 'permission');
+    }
+
+    public function hasAccess(array $permissions) : bool
+    {
+        foreach ($this->position as $pos) {
+            if($pos->hasAccess($permissions)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

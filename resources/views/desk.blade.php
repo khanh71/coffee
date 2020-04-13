@@ -87,7 +87,7 @@
                             </span>
                         </div>
                     </form>
-                    <div class="col-md-1 text-right"><button class="btn btn-success btn-icon btn-rounded" data-toggle="modal" data-target="#new"><i class="mdi mdi-plus"></i></button></div>
+                    <div class="col-md-1 text-right"><button class="btn btn-success btn-icon btn-rounded" @can('desk.create') data-toggle="modal" data-target="#new" @else disabled @endcan><i class="mdi mdi-plus"></i></button></div>
                 </div>
                 <div class="table-responsive">
                     <table class="table table-hover">
@@ -107,10 +107,10 @@
                                 <td>{{$desk->deskname}}</td>
                                 <td>{{$desk->zonename}}</td>
                                 <td>
-                                    <button class="btn btn-info btn-rounded btn-icon" data-iddesk="{{$desk->iddesk}}" data-deskname="{{$desk->deskname}}" data-zoneid="{{$desk->zoneid}}" data-toggle="modal" data-target="#edit"><i class="mdi mdi-pencil"></i></button>
+                                    <button class="btn btn-info btn-rounded btn-icon" @can('desk.update') data-iddesk="{{$desk->iddesk}}" data-deskname="{{$desk->deskname}}" data-zoneid="{{$desk->zoneid}}" data-toggle="modal" data-target="#edit" @else disabled @endcan><i class="mdi mdi-pencil"></i></button>
                                 </td>
                                 <td>
-                                    <button class="btn btn-icon btn-rounded btn-danger" data-iddesk="{{$desk->iddesk}}" data-toggle="modal" data-target="#delete"><i class="mdi mdi-delete-forever"></i></button>
+                                    <button class="btn btn-icon btn-rounded btn-danger" @can('desk.delete') data-iddesk="{{$desk->iddesk}}" data-toggle="modal" data-target="#delete" @else disabled @endcan><i class="mdi mdi-delete-forever"></i></button>
                                 </td>
                             </tr>
                             @empty

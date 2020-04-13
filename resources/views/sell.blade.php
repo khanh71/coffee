@@ -127,7 +127,11 @@
                                     <i class="mdi icon-hg @if($desk->state==0) text-dark mdi-coffee-outline @elseif($desk->state==1) text-success mdi-coffee-outline @else text-success mdi-coffee @endif"></i>
                                     @if($desk->state==0)
                                     <div class="btn-group" role="group">
+                                        @can('sell.create')
                                         <a href="{{route('new-call',$desk->iddesk)}}" style="border-bottom-left-radius: 0;" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Gọi Món"><i class="mdi mdi-human-greeting"></i></a>
+                                        @else
+                                        <button type="button" style="border-bottom-left-radius: 0;" class="btn btn-info" disabled><i class="mdi mdi-human-greeting"></i></button>
+                                        @endcan
                                         <button type="button" style="border-bottom-right-radius: 0;" class="btn btn-dark" disabled><i class="mdi mdi-eye"></i></button>
                                     </div>
                                     <div class="btn-group" role="group">
@@ -136,12 +140,20 @@
                                     </div>
                                     @else
                                     <div class="btn-group" role="group">
+                                        @can('sell.create')
                                         <a href="{{route('edit-call',$desk->iddesk)}}" style="border-bottom-left-radius: 0;" class="btn btn-info" data-toggle="tooltip" data-placement="top" title="Gọi Món"><i class="mdi mdi-human-greeting"></i></a>
+                                        @else
+                                        <button type="button" style="border-bottom-left-radius: 0;" class="btn btn-info" disabled><i class="mdi mdi-human-greeting"></i></button>
+                                        @endcan
                                         <button type="button" style="border-bottom-right-radius: 0;" class="btn btn-success" data-deskid="{{$desk->iddesk}}" data-toggle="modal" data-target="#view" rel="tooltip" data-placement="top" title="Xem Món Đã Gọi"><i class="mdi mdi-eye"></i></button>
                                     </div>
                                     <div class="btn-group" role="group">
-                                        <button type="button" style="border-top-left-radius: 0;" type="button" class="btn btn-danger" data-toggle="modal" data-target="#merge" data-deskname="{{$desk->deskname}}" data-deskid="{{$desk->iddesk}}" rel="tooltip" data-placement="bottom" title="Ghép Bàn"><i class="mdi mdi-swap-horizontal"></i></button>
+                                        <button type="button" style="border-top-left-radius: 0;" type="button" class="btn btn-danger" @can('sell.merge') data-toggle="modal" data-target="#merge" data-deskname="{{$desk->deskname}}" data-deskid="{{$desk->iddesk}}" rel="tooltip" data-placement="bottom" title="Ghép Bàn" @else disabled @endcan><i class="mdi mdi-swap-horizontal"></i></button>
+                                        @can('sell.pay')
                                         <a href="{{route('pay',$desk->iddesk)}}" style="border-top-right-radius: 0;" type="button" class="btn btn-warning" data-toggle="tooltip" data-placement="bottom" title="Thanh Toán"><i class="mdi mdi-bank"></i></a>
+                                        @else
+                                        <button style="border-top-right-radius: 0;" type="button" class="btn btn-warning"><i class="mdi mdi-bank"></i></button>
+                                        @endcan
                                     </div>
                                     @endif
                                 </div>

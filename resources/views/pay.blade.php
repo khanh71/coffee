@@ -125,7 +125,7 @@
                 <div class="container-fluid w-100">
                     <a class="btn btn-primary btn-icon-text float-left text-white" id="print"><i class="mdi mdi-printer btn-icon-prepend"></i>In</a>
                     <button class="btn btn-warning btn-icon-text float-right ml-2" type="submit"><i class="mdi mdi-telegram btn-icon-prepend"></i>Thanh Toán</button>
-                    <a href="{{route('/')}}" class="btn btn-secondary btn-icon-text float-right"><i class="mdi mdi-cancel btn-icon-prepend"></i>Hủy</a>
+                    <a href="{{route('sell')}}" class="btn btn-secondary btn-icon-text float-right"><i class="mdi mdi-cancel btn-icon-prepend"></i>Hủy</a>
                 </div>
             </form>
         </div>
