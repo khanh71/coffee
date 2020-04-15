@@ -17,6 +17,10 @@ Route::post('register', 'Controller@postRegister')->name('register');
 Route::group(['middleware' => 'CheckLogin'], function () {
     Route::get('logout', 'Controller@getLogout')->name('logout');
     Route::get('/', 'Controller@getDashboard')->name('/');
+    Route::post('edit-shop', 'Controller@postEditShop')->name('edit-shop')->middleware('can:shop.update');
+    Route::post('edit-user', 'Controller@postEditUser')->name('edit-user');
+    Route::get('find-username', 'Controller@getFindUsername')->name('find-username');
+    Route::post('edit-login', 'Controller@postEditLogin')->name('edit-login');
 
     //manager sell
     Route::get('sell', 'Controller@getSell')->name('sell')->middleware('can:sell.view');
@@ -122,4 +126,19 @@ Route::group(['middleware' => 'CheckLogin'], function () {
     Route::get('edit-product/{id}', 'Controller@getEditProduct')->name('edit-product')->middleware('can:product.update');
     Route::post('edit-product/{id}', 'Controller@postEditProduct')->name('edit-product')->middleware('can:product.update');
     Route::post('delete-product', 'Controller@postDeleteProduct')->name('delete-product')->middleware('can:product.delete');
+
+    //report
+    Route::get('report-salary', 'Controller@getReportSalary')->name('report-salary')->middleware('can:report.salary');
+    Route::post('report-salary', 'Controller@getReportSalary')->name('report-salary')->middleware('can:report.salary');
+    Route::get('find-wd', 'Controller@getFindWd')->name('find-wd');
+    Route::get('print-salary/{dayfrom}/{dayto}', 'Controller@getPrintSalary')->name('print-salary')->middleware('can:report.salary');
+    Route::get('report-shop', 'Controller@getReportSell')->name('report-sell')->middleware('can:report.sell');
+    Route::post('report-shop', 'Controller@getReportSell')->name('report-sell')->middleware('can:report.sell');
+    Route::get('print-sell/{dayfrom}/{dayto}', 'Controller@getPrintSell')->name('print-sell')->middleware('can:report.sell');
+    Route::get('report-profit', 'Controller@getReportProfit')->name('report-profit')->middleware('can:report.profit');
+    Route::post('report-profit', 'Controller@getReportProfit')->name('report-profit')->middleware('can:report.profit');
+    Route::get('print-profit/{dayfrom}/{dayto}', 'Controller@getPrintProfit')->name('print-profit')->middleware('can:report.profit');
+    Route::get('report-cost', 'Controller@getReportCost')->name('report-cost')->middleware('can:report.cost');
+    Route::post('report-cost', 'Controller@getReportCost')->name('report-cost')->middleware('can:report.cost');
+    Route::get('print-cost/{dayfrom}/{dayto}', 'Controller@getPrintCost')->name('print-cost')->middleware('can:report.cost');
 });

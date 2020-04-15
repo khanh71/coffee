@@ -36,7 +36,102 @@ class Controller extends BaseController
 
     public function getDashboard()
     {
-        return view('dashboard');
+        $user = User::where('shopid', Auth::user()->shopid)->get()->count();
+        $desk = Desk::where('state', 1)->where('shopid', Auth::user()->shopid)->get()->count();
+        $desks = Desk::where('shopid', Auth::user()->shopid)->get()->count();
+        $cate = ProductCate::where('shopid', Auth::user()->shopid)->get()->count();
+        $pro = Product::where('shopid', Auth::user()->shopid)->get()->count();
+        $proorder = Product::leftJoin('billdetail', 'billdetail.proid', 'product.idpro')
+            ->selectRaw('proname, count(idpro) as countPro')->where('shopid', Auth::user()->shopid)
+            ->groupBy('proname')->get();
+        $month = Carbon::today('Asia/Ho_Chi_Minh')->month;
+        $money = Bill::selectRaw('billdate, sum(total) as sumTotal')->where('shopid', Auth::user()->shopid)
+            ->whereRaw('MONTH(billdate) = ' . $month)->groupBy('billdate')->get();
+        return view('dashboard', compact('user', 'desk', 'cate', 'pro', 'proorder', 'desks', 'money'));
+    }
+
+    public function postEditShop(Request $req)
+    {
+        $this->validate($req, [
+            'shopname' => 'required|max:50',
+            'shopaddress' => 'required|max:255',
+        ], [
+            'shopname.max' => 'Tên cửa hàng tối đa 50 ký tự',
+            'shopaddress.max' => 'Địa chỉ tối đa 255 ký tự',
+        ]);
+
+        try {
+            $shop = Shop::where('idshop', Auth::user()->shopid)->first();
+            $shop->shopname = $req->shopname;
+            $shop->shopaddress = $req->shopaddress;
+            $shop->update();
+            return redirect()->back()->with('success', '');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('err', '');
+        }
+    }
+
+    public function postEditUser(Request $req)
+    {
+        $validator = Validator::make(
+            $req->all(),
+            [
+                'nameeee' => 'required|min:10|max:50',
+                'addresseee' => 'required|max:150',
+                'birthdayeee' => 'required|min:10',
+                'phoneeee' => 'required|min:12'
+            ],
+            [
+                'nameeee.min' => 'Họ tên tối thiểu 10 ký tự',
+                'nameeee.max' => 'Họ tên tối đa 50 ký tự',
+                'addresseee.max' => 'Địa chỉ tối đa 150 ký tự',
+                'birthdayeee.min' => 'Ngày sinh không đúng định dạng',
+                'phoneeee.min' => 'Số điện thoại không đúng định dạng'
+            ]
+        );
+
+        if ($validator->fails()) {
+            return redirect()->back()->withErrors($validator, 'postEditUser_Error')->withInput();
+        }
+
+        try {
+            $user = User::where('id', Auth::user()->id)->first();
+
+            $user->name = $req->nameeee;
+            $user->address = $req->addresseee;
+            $user->birthday = $req->birthdayeee;
+            $user->phone = $req->phoneeee;
+            $user->update();
+
+            return redirect()->back()->with('success', '');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('err', '');
+        }
+    }
+
+    public function getFindUsername(Request $req)
+    {
+        $user = User::where('email', $req->email)->where('id', '<>', Auth::user()->id)->first();
+        if ($user)
+            $data = ['state' => 1, 'email' => $req->email];
+        else
+            $data = ['state' => 0, 'email' => $req->email];
+        return response()->json($data);
+    }
+
+    public function postEditLogin(Request $req)
+    {
+        try {
+            $user = User::where('id', Auth::user()->id)->first();
+
+            $user->email = $req->emailedit;
+            $user->password = bcrypt($req->passwordedit);
+            $user->update();
+
+            return redirect()->back()->with('success', '');
+        } catch (\Throwable $th) {
+            return redirect()->back()->with('err', '');
+        }
     }
 
     public function getLogin()
@@ -127,6 +222,12 @@ class Controller extends BaseController
                 }
             }
             $permission['position.role'] = true;
+            $permission['report.sell'] = true;
+            $permission['report.salary'] = true;
+            $permission['report.profit'] = true;
+            $permission['report.cost'] = true;
+            $permission['shop.update'] = true;
+
             $pos->posname = 'Admin';
             $pos->coefficient = '0';
             $pos->shopid = $shop->idshop;
@@ -209,6 +310,12 @@ class Controller extends BaseController
                 }
             }
             $permission['position.role'] = false;
+            $permission['report.sell'] = false;
+            $permission['report.salary'] = false;
+            $permission['report.profit'] = false;
+            $permission['report.cost'] = false;
+            $permission['shop.update'] = false;
+
             $pos = new Position;
             $pos->posname = $req->posname;
             $pos->coefficient = $req->coefficient;
@@ -1082,7 +1189,7 @@ class Controller extends BaseController
             $req->all(),
             [
                 'idsupp' => 'required|numeric|not_in:supplier',
-                'impdate' => 'required|date',
+                'impdate' => 'required',
                 'idma.*' => 'required|numeric|not_in:material',
                 'impamount.*' => 'required|numeric|min:1|max:1000000',
                 'impprice.*' => 'required|numeric|min:1|max:1000000000',
@@ -1094,7 +1201,6 @@ class Controller extends BaseController
                 'idsupp.numeric' => 'Nhà cung cấp phải là số',
                 'idsupp.not_in' => 'Nhà cung cấp không phù hợp',
                 'impdate.required' => 'Vui lòng chọn ngày nhập kho',
-                'impdate.date' => 'Ngày nhập kho không đúng định dạng',
                 'idmma.required' => 'Vui lòng chọn nguyên liệu',
                 'idma.numeric' => 'Nguyên liệu phải là số',
                 'idma.not_in' => 'Nguyên liệu không phù hợp',
@@ -1166,7 +1272,7 @@ class Controller extends BaseController
             $req->all(),
             [
                 'idsupp' => 'required|numeric|not_in:supplier',
-                'impdate' => 'required|date',
+                'impdate' => 'required',
                 'idma.*' => 'required|numeric|not_in:material',
                 'impamount.*' => 'required|numeric|min:1|max:1000000',
                 'impprice.*' => 'required|numeric|min:1|max:1000000000',
@@ -1178,7 +1284,6 @@ class Controller extends BaseController
                 'idsupp.numeric' => 'Nhà cung cấp phải là số',
                 'idsupp.not_in' => 'Nhà cung cấp không phù hợp',
                 'impdate.required' => 'Vui lòng chọn ngày nhập kho',
-                'impdate.date' => 'Ngày nhập kho không đúng định dạng',
                 'idmma.required' => 'Vui lòng chọn nguyên liệu',
                 'idma.numeric' => 'Nguyên liệu phải là số',
                 'idma.not_in' => 'Nguyên liệu không phù hợp',
@@ -1925,6 +2030,11 @@ class Controller extends BaseController
             else
                 $permission['position.role'] = false;
 
+            if (!empty($req->shop_update))
+                $permission['shop.update'] = true;
+            else
+                $permission['shop.update'] = false;
+
             if (!empty($req->sell_view))
                 $permission['sell.view'] = true;
             else
@@ -1950,11 +2060,177 @@ class Controller extends BaseController
             else
                 $permission['sell.pay'] = false;
 
+            if (!empty($req->report_sell))
+                $permission['report.sell'] = true;
+            else
+                $permission['report.sell'] = false;
+
+            if (!empty($req->report_profit))
+                $permission['report.profit'] = true;
+            else
+                $permission['report.profit'] = false;
+
+            if (!empty($req->report_salary))
+                $permission['report.salary'] = true;
+            else
+                $permission['report.salary'] = false;
+
+            if (!empty($req->report_cost))
+                $permission['report.cost'] = true;
+            else
+                $permission['report.cost'] = false;
+
             $pos->permissions = $permission;
             $pos->update();
             return redirect()->route('position')->with('success', '');
         } catch (\Throwable $th) {
             return redirect()->route('position')->with('err', '');
         }
+    }
+
+    public function getReportSalary(Request $req)
+    {
+        $dayfrom = Carbon::today('Asia/Ho_Chi_Minh');
+        $dayto = Carbon::today('Asia/Ho_Chi_Minh');
+        if ($req->dayfrom && $req->dayto) {
+            $a = explode('/', $req->dayfrom);
+            $b = explode('/', $req->dayto);
+            $dayfrom = Carbon::create($a[2], $a[1], $a[0]);
+            $dayto = Carbon::create($b[2], $b[1], $b[0]);
+        }
+        $salary = Workday::selectRaw('name, coefficient, basesalary, id, posname, sum(hour) as hour')
+            ->rightJoin('users', 'users.id', '=', 'workday.userid')
+            ->join('permission', 'permission.user_id', '=', 'users.id')
+            ->join('position', 'permission.position_idpos', '=', 'position.idpos')
+            ->where('workday.shopid', Auth::user()->shopid)
+            ->where('wddate', '<=', $dayto)->where('wddate', '>=', $dayfrom)->groupBy('name', 'coefficient', 'basesalary', 'id', 'posname')->get();
+        return view('reportsalary', compact('salary', 'dayfrom', 'dayto'));
+    }
+
+    public function getFindWd(Request $req)
+    {
+        $a = explode('/', $req->dayfrom);
+        $b = explode('/', $req->dayto);
+        $dayfrom = Carbon::create($a[2], $a[1], $a[0]);
+        $dayto = Carbon::create($b[2], $b[1], $b[0]);
+        $data = Workday::where('workday.shopid', Auth::user()->shopid)->where('wddate', '<=', $dayto)->where('wddate', '>=', $dayfrom)->get();
+        return response()->json($data);
+    }
+
+    public function getPrintSalary($dayfrom, $dayto)
+    {
+        $now = Carbon::today('Asia/Ho_Chi_Minh');
+        $a = explode('-', $dayfrom);
+        $b = explode('-', $dayto);
+        $start = Carbon::create($a[2], $a[1], $a[0]);
+        $end = Carbon::create($b[2], $b[1], $b[0]);
+        $salary = Workday::selectRaw('name, coefficient, basesalary, id, posname, sum(hour) as hour')
+            ->rightJoin('users', 'users.id', '=', 'workday.userid')
+            ->join('permission', 'permission.user_id', '=', 'users.id')
+            ->join('position', 'permission.position_idpos', '=', 'position.idpos')
+            ->where('workday.shopid', Auth::user()->shopid)
+            ->where('wddate', '<=', $end)->where('wddate', '>=', $start)->groupBy('name', 'coefficient', 'basesalary', 'id', 'posname')->get();
+        return view('printsalary', compact('salary', 'dayfrom', 'dayto', 'now'));
+    }
+
+    public function getReportSell(Request $req)
+    {
+        $dayfrom = Carbon::today('Asia/Ho_Chi_Minh');
+        $dayto = Carbon::today('Asia/Ho_Chi_Minh');
+        if ($req->dayfrom && $req->dayto) {
+            $a = explode('/', $req->dayfrom);
+            $b = explode('/', $req->dayto);
+            $dayfrom = Carbon::create($a[2], $a[1], $a[0]);
+            $dayto = Carbon::create($b[2], $b[1], $b[0]);
+        }
+        $sell = Bill::join('desk', 'desk.iddesk', 'bill.deskid')->where('bill.shopid', Auth::user()->shopid)
+            ->where('billdate', '<=', $dayto)->where('billdate', '>=', $dayfrom)->orderBy('billdate')->get();
+        return view('reportsell', compact('sell', 'dayfrom', 'dayto'));
+    }
+
+    public function getPrintSell($dayfrom, $dayto)
+    {
+        $now = Carbon::today('Asia/Ho_Chi_Minh');
+        $a = explode('-', $dayfrom);
+        $b = explode('-', $dayto);
+        $start = Carbon::create($a[2], $a[1], $a[0]);
+        $end = Carbon::create($b[2], $b[1], $b[0]);
+        $sell = Bill::join('desk', 'desk.iddesk', 'bill.deskid')->where('bill.shopid', Auth::user()->shopid)
+            ->where('billdate', '<=', $end)->where('billdate', '>=', $start)->orderBy('billdate')->get();
+        return view('printsell', compact('sell', 'dayfrom', 'dayto', 'now'));
+    }
+
+    public function getReportProfit(Request $req)
+    {
+        $dayfrom = Carbon::today('Asia/Ho_Chi_Minh');
+        $dayto = Carbon::today('Asia/Ho_Chi_Minh');
+        if ($req->dayfrom && $req->dayto) {
+            $a = explode('/', $req->dayfrom);
+            $b = explode('/', $req->dayto);
+            $dayfrom = Carbon::create($a[2], $a[1], $a[0]);
+            $dayto = Carbon::create($b[2], $b[1], $b[0]);
+        }
+        $profit = Bill::selectRaw('proname, procatename, avg(billprice) as proprice, sum(billamount) as billamount, sum((number*maprice)/2) as price')
+            ->join('billdetail', 'billdetail.billid', 'bill.idbill')
+            ->join('product', 'product.idpro', 'billdetail.proid')
+            ->join('productcate', 'productcate.idprocate', 'product.procateid')
+            ->join('formula', 'formula.proid', 'product.idpro')
+            ->join('material', 'material.idma', 'formula.maid')
+            ->where('bill.shopid', Auth::user()->shopid)
+            ->where('billdate', '<=', $dayto)->where('billdate', '>=', $dayfrom)
+            ->groupBy('proname', 'procatename')->orderBy('procatename')->get();
+        return view('reportprofit', compact('profit', 'dayfrom', 'dayto'));
+    }
+
+    public function getPrintProfit($dayfrom, $dayto)
+    {
+        $now = Carbon::today('Asia/Ho_Chi_Minh');
+        $a = explode('-', $dayfrom);
+        $b = explode('-', $dayto);
+        $start = Carbon::create($a[2], $a[1], $a[0]);
+        $end = Carbon::create($b[2], $b[1], $b[0]);
+        $profit = Bill::selectRaw('proname, procatename, avg(billprice) as proprice, sum(billamount) as billamount, sum((number*maprice)/2) as price')
+            ->join('billdetail', 'billdetail.billid', 'bill.idbill')
+            ->join('product', 'product.idpro', 'billdetail.proid')
+            ->join('productcate', 'productcate.idprocate', 'product.procateid')
+            ->join('formula', 'formula.proid', 'product.idpro')
+            ->join('material', 'material.idma', 'formula.maid')
+            ->where('bill.shopid', Auth::user()->shopid)
+            ->where('billdate', '<=', $end)->where('billdate', '>=', $start)
+            ->groupBy('proname', 'procatename')->orderBy('procatename')->get();
+        return view('printprofit', compact('profit', 'dayfrom', 'dayto', 'now'));
+    }
+
+    public function getReportCost(Request $req)
+    {
+        $dayfrom = Carbon::today('Asia/Ho_Chi_Minh');
+        $dayto = Carbon::today('Asia/Ho_Chi_Minh');
+        if ($req->dayfrom && $req->dayto) {
+            $a = explode('/', $req->dayfrom);
+            $b = explode('/', $req->dayto);
+            $dayfrom = Carbon::create($a[2], $a[1], $a[0]);
+            $dayto = Carbon::create($b[2], $b[1], $b[0]);
+        }
+        $cost = Import::join('supplier', 'import.suppid', 'supplier.idsupp')
+            ->join('importdetail', 'import.idimp', 'importdetail.impid')
+            ->join('material', 'material.idma', 'importdetail.maid')
+            ->where('import.shopid', Auth::user()->shopid)
+            ->where('impdate', '<=', $dayto)->where('impdate', '>=', $dayfrom)->orderBy('impdate')->get();
+        return view('reportcost', compact('cost', 'dayfrom', 'dayto'));
+    }
+
+    public function getPrintCost($dayfrom, $dayto)
+    {
+        $now = Carbon::today('Asia/Ho_Chi_Minh');
+        $a = explode('-', $dayfrom);
+        $b = explode('-', $dayto);
+        $start = Carbon::create($a[2], $a[1], $a[0]);
+        $end = Carbon::create($b[2], $b[1], $b[0]);
+        $cost = Import::join('supplier', 'import.suppid', 'supplier.idsupp')
+            ->join('importdetail', 'import.idimp', 'importdetail.impid')
+            ->join('material', 'material.idma', 'importdetail.maid')
+            ->where('import.shopid', Auth::user()->shopid)
+            ->where('impdate', '<=', $end)->where('impdate', '>=', $start)->orderBy('impdate')->get();
+        return view('printcost', compact('cost', 'dayfrom', 'dayto', 'now'));
     }
 }

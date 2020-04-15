@@ -189,4 +189,52 @@
     limitReachedClass: "badge mt-1 badge-danger"
   });
 
+  $('#shopnameedit').maxlength({
+    alwaysShow: true,
+    threshold: 50,
+    warningClass: "badge mt-1 badge-info",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#shopaddressedit').maxlength({
+    alwaysShow: true,
+    threshold: 255,
+    warningClass: "badge mt-1 badge-info",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#nameeee').maxlength({
+    alwaysShow: true,
+    threshold: 50,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#addresseee').maxlength({
+    alwaysShow: true,
+    threshold: 150,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#emailedit').maxlength({
+    alwaysShow: true,
+    threshold: 50,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#passwordedit').maxlength({
+    alwaysShow: true,
+    threshold: 50,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
+
+  $('#repasswordedit').maxlength({
+    alwaysShow: true,
+    threshold: 50,
+    warningClass: "badge mt-1 badge-success",
+    limitReachedClass: "badge mt-1 badge-danger"
+  });
 })(jQuery);

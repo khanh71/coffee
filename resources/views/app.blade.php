@@ -132,6 +132,38 @@
                     <p>Báo Cáo</p>
                     <span></span>
                 </li>
+                @can('report.salary')
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('report-salary')}}">
+                        <i class="mdi mdi-calendar-text menu-icon"></i>
+                        <span class="menu-title">Tính Lương</span>
+                    </a>
+                </li>
+                @endcan
+                @can('report.sell')
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('report-sell')}}">
+                        <i class="mdi mdi-chart-areaspline menu-icon"></i>
+                        <span class="menu-title">Báo Cáo Bán Hàng</span>
+                    </a>
+                </li>
+                @endcan
+                @can('report.profit')
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('report-profit')}}">
+                        <i class="mdi mdi-chart-gantt menu-icon"></i>
+                        <span class="menu-title">Báo Cáo Lợi Nhuận</span>
+                    </a>
+                </li>
+                @endcan
+                @can('report.cost')
+                <li class="nav-item">
+                    <a class="nav-link" href="{{route('report-cost')}}">
+                        <i class="mdi mdi-wallet menu-icon"></i>
+                        <span class="menu-title">Chi Phí Nhập Nguyên Liệu</span>
+                    </a>
+                </li>
+                @endcan
             </ul>
         </nav>
         <!-- partial -->
@@ -158,10 +190,20 @@
                                 <i class="mdi mdi-account-circle icon-lg"></i>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right navbar-dropdown" aria-labelledby="profileDropdown">
-                                <a class="dropdown-item">
+                                <a class="dropdown-item" data-toggle="modal" data-target="#editeee">
+                                    <i class="mdi mdi-account-check text-primary"></i>
+                                    Sửa thông tin cá nhân
+                                </a>
+                                <a class="dropdown-item" data-toggle="modal" data-target="#editlogin">
+                                    <i class="mdi mdi-key-variant text-primary"></i>
+                                    Sửa thông tin đăng nhập
+                                </a>
+                                @can('shop.update')
+                                <a class="dropdown-item" data-toggle="modal" data-target="#editshop">
                                     <i class="mdi mdi-settings text-primary"></i>
                                     Sửa thông tin cửa hàng
                                 </a>
+                                @endcan
                                 <a class="dropdown-item" href="{{route('logout')}}">
                                     <i class="mdi mdi-logout text-primary"></i>
                                     Đăng xuất
@@ -197,6 +239,68 @@
         </div>
         <!-- page-body-wrapper ends -->
     </div>
+    <div class="modal fade" id="editshop" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-info">
+                    <h5 class="modal-title text-uppercase" id="ModalLabel"><i class="mdi mdi-pencil-box-outline mr-1"></i>Sửa thông tin cửa hàng</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="forms-sample" id="formShop" method="post" action="{{route('edit-shop')}}">
+                        @csrf
+                        <div class="form-group">
+                            <label>Tên cửa hàng</label>
+                            <input type="text" class="form-control text-capitalize" id="shopnameedit" name="shopname" required maxlength="50" value="{{$shop->shopname}}">
+                        </div>
+                        <div class="form-group">
+                            <label>Địa chỉ</label>
+                            <input type="text" class="form-control text-capitalize" id="shopaddressedit" name="shopaddress" required maxlength="255" value="{{$shop->shopaddress}}">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Hủy</button>
+                            <button class="btn btn-info btn-icon-text" type="submit"><i class="mdi mdi-content-save btn-icon-prepend"></i>Lưu</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="modal fade" id="editlogin" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-info">
+                    <h5 class="modal-title text-uppercase" id="ModalLabel"><i class="mdi mdi-pencil-box-outline mr-1"></i>Sửa thông tin đăng nhập</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="forms-sample" id="formEditLogin" method="post" action="{{route('edit-login')}}">
+                        @csrf
+                        <div class="form-group">
+                            <label>Tên đăng nhập mới</label>
+                            <input type="text" class="form-control form-control-lg" id="emailedit" name="emailedit" maxLength='50' required>
+                        </div>
+                        <div class="form-group">
+                            <label>Mật khẩu mới</label>
+                            <input type="password" class="form-control form-control-lg" id="passwordedit" name="passwordedit" maxLength='50' required>
+                        </div>
+                        <div class="form-group">
+                            <label>Nhập lại mật khẩu mới</label>
+                            <input type="password" class="form-control form-control-lg" id="repasswordedit" maxLength='50' required>
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Hủy</button>
+                            <button class="btn btn-info btn-icon-text" type="submit"><i class="mdi mdi-content-save btn-icon-prepend"></i>Lưu</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <!-- container-scroller -->
     <!-- base:js -->
     <script src="{{asset('vendors/js/vendor.bundle.base.js')}}"></script>
@@ -230,11 +334,46 @@
     <!-- endinject -->
     <!-- Plugin js for this page-->
     @yield('javascript')
+    <script>
+        $('#emailedit').on('keyup', function() {
+            var email = $(this).val();
+            $('#formEditLogin').find('#usernamedupp').remove();
+            var dataId = {
+                'email': email
+            };
+            $.ajax({
+                type: 'GET',
+                url: '{{route("find-username")}}',
+                dataType: 'json',
+                data: dataId,
+                success: function(data) {
+                    if (data.state == 1) {
+                        $('#emailedit').val('');
+                        $('#formEditLogin').prepend('<div class="alert alert-fill-danger" id="usernamedupp" role="alert">' +
+                            '<i class="mdi mdi-information-outline mr-1"></i>Tên đăng nhập "' + data.email + '" đã được đăng ký</div>');
+                    } else
+                        $('#formEditLogin').find('#usernamedupp').remove();
+                }
+            });
+        });
+    </script>
+    <script src="{{asset('vendors/jquery-validation/jquery.validate.min.js')}}"></script>
+    <script src="{{asset('js/form-validation.js')}}"></script>
+    <script src="{{asset('vendors/bootstrap-maxlength/bootstrap-maxlength.min.js')}}"></script>
+    <script src="{{asset('js/bt-maxLength.js')}}"></script>
+    <script src="{{asset('vendors/inputmask/jquery.inputmask.bundle.js')}}"></script>
+    <script src="{{asset('vendors/inputmask/inputmask.binding.js')}}"></script>
+    <script src="{{asset('vendors/inputmask/phone-vn.js')}}"></script>
     <!-- End plugin js for this page-->
     <!-- inject:js -->
     <script src="{{asset('js/off-canvas.js')}}"></script>
     <script src="{{asset('js/hoverable-collapse.js')}}"></script>
     <script src="{{asset('js/template.js')}}"></script>
+    <script>
+        $('.dropdown').hover(function() {
+            $('.dropdown-toggle', this).trigger('click');
+        });
+    </script>
     <!-- endinject -->
     <!-- plugin js for this page -->
     <!-- End plugin js for this page -->

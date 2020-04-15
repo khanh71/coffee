@@ -13,11 +13,6 @@
 <script src="{{asset('vendors/sweetalert/sweetalert.min.js')}}"></script>
 <script src="{{asset('vendors/jquery-toast-plugin/jquery.toast.min.js')}}"></script>
 <script src="{{asset('js/toastDemo.js')}}"></script>
-<script src="{{asset('vendors/jquery-validation/jquery.validate.min.js')}}"></script>
-<script src="{{asset('js/form-validation.js')}}"></script>
-<script src="{{asset('vendors/bootstrap-maxlength/bootstrap-maxlength.min.js')}}"></script>
-<script src="{{asset('js/bt-maxLength.js')}}"></script>
-<script src="{{asset('vendors/moment/moment.min.js')}}"></script>
 <script src="{{asset('vendors/bootstrap-datepicker/bootstrap-datepicker.min.js')}}"></script>
 <script src="{{asset('js/formpickers.js')}}"></script>
 @if(count($errors)>0 || Session::has('err')) <script>
@@ -70,7 +65,7 @@
         model.find('#idwd').val(idwd);
         model.find('#nameedit').val(name);
         model.find('#houredit').val(hour);
-        model.find('#datepicker-popup-daywork-edit').datepicker('update', new Date({{$dayfrom->year}},{{$dayfrom->month-1}},{{$dayfrom->day}}));
+        model.find('#datepicker-popup-daywork-edit').datepicker('update', new Date('{{$dayfrom->year}}', '{{$dayfrom->month-1}}', '{{$dayfrom->day}}'));
     })
 
     $('#delete').on('show.bs.modal', function(event) {
@@ -80,8 +75,8 @@
         model.find('#idwddel').val(idwd);
     })
 
-    $('#datepicker-popup-dayfrom').datepicker('update', new Date({{$dayfrom->year}},{{$dayfrom->month-1}},{{$dayfrom->day}}));
-    $('#datepicker-popup-dayto').datepicker('update', new Date({{$dayto->year}},{{$dayto->month-1}},{{$dayto->day}}));
+    $('#datepicker-popup-dayfrom').datepicker('update', new Date('{{$dayfrom->year}}', '{{$dayfrom->month-1}}', '{{$dayfrom->day}}'));
+    $('#datepicker-popup-dayto').datepicker('update', new Date('{{$dayto->year}}', '{{$dayto->month-1}}', '{{$dayto->day}}'));
 
     $("#datepicker-popup-dayfrom").datepicker().on('dp.show', function(event) {
         event.stopPropagation();
@@ -101,7 +96,9 @@
 <!--list of wd-->
 <div class="card">
     <div class="card-body">
-        <div class="card-title ribbon ribbon-primary"><div class="glow"></div>Quản lý Chấm công</div>
+        <div class="card-title ribbon ribbon-primary">
+            <div class="glow"></div>Quản lý Chấm công
+        </div>
         <div class="row">
             <div class="col-12">
                 <div class="row">

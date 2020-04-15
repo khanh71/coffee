@@ -9,6 +9,7 @@ use App\Policies\MaterialPolicy;
 use App\Policies\PositionPolicy;
 use App\Policies\ProductCatePolicy;
 use App\Policies\ProductPolicy;
+use App\Policies\ReportPolicy;
 use App\Policies\SellPolicy;
 use App\Policies\SupplierPolicy;
 use App\Policies\VoucherPolicy;
@@ -51,5 +52,10 @@ class AuthServiceProvider extends ServiceProvider
         Gate::resource('sell', SellPolicy::class);
         Gate::define('sell.pay', SellPolicy::class . '@pay');
         Gate::define('sell.merge', SellPolicy::class . '@merge');
+        Gate::define('report.cost', ReportPolicy::class . '@cost');
+        Gate::define('report.sell', ReportPolicy::class . '@sell');
+        Gate::define('report.profit', ReportPolicy::class . '@profit');
+        Gate::define('report.salary', ReportPolicy::class . '@salary');
+        Gate::define('shop.update', ReportPolicy::class . '@shop');
     }
 }

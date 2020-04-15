@@ -789,7 +789,123 @@
       }
     });
 
+    $("#formShop").validate({
+      rules: {
+        shopname: {
+          required: true
+        },
+        shopaddress: {
+          required: true
+        }
+      },
+      messages: {
+        shopname: {
+          required: "Vui lòng nhập tên cửa hàng"
+        },
+        shopaddress: {
+          required: "Vui lòng nhập địa chỉ"
+        }
+      },
+      errorPlacement: function (label, element) {
+        label.addClass('mt-2 text-danger');
+        label.insertAfter(element);
+      },
+      success: function (label, element) {
+        label.parent().removeClass('has-danger');
+        label.remove();
+      },
+      highlight: function (element, errorClass) {
+        $(element).parent().addClass('has-danger')
+        $(element).addClass('form-control-danger')
+      }
+    });
 
+    $("#formEee").validate({
+      rules: {
+        nameeee: {
+          required: true,
+          minlength: 10
+        },
+        addresseee: {
+          required: true
+        },
+        birthdayeee: {
+          required: true
+        },
+        phoneeee: {
+          required: true
+        }
+      },
+      messages: {
+        nameeee: {
+          required: "Vui lòng nhập họ tên",
+          minlength: "Họ tên tối thiểu 10 ký tự"
+        },
+        addresseee: {
+          required: "Vui lòng nhập địa chỉ"
+        },
+        birthdayeee: {
+          required: "Vui lòng nhập ngày sinh",
+        },
+        phoneeee: {
+          required: "Vui lòng nhập số điện thoại"
+        }
+      },
+      errorPlacement: function (label, element) {
+        label.addClass('mt-2 text-danger');
+        label.insertAfter(element);
+      },
+      success: function (label, element) {
+        label.parent().removeClass('has-danger');
+        label.remove();
+      },
+      highlight: function (element, errorClass) {
+        $(element).parent().addClass('has-danger')
+        $(element).addClass('form-control-danger')
+      }
+    });
 
+    $("#formEditLogin").validate({
+      rules: {
+        passwordedit: {
+          required: true,
+          minlength: 8
+        },
+        repasswordedit: {
+          required: true,
+          minlength: 8,
+          equalTo: "#passwordedit"
+        },
+        emailedit: {
+          required: true
+        }
+      },
+      messages: {
+        passwordedit: {
+          required: "Vui lòng nhập mật khẩu mới",
+          minlength: "Mật khẩu mới tối thiểu 8 ký tự"
+        },
+        repasswordedit: {
+          required: "Vui lòng nhập lại mật khẩu mới",
+          minlength: "Mật khẩu mới tối thiểu 8 ký tự",
+          equalTo: "Mật khẩu xác nhận không khớp"
+        },
+        emailedit: {
+          required: "Vui lòng nhập tên đăng nhập mới"
+        }
+      },
+      errorPlacement: function (label, element) {
+        label.addClass('mt-2 text-danger');
+        label.insertAfter(element);
+      },
+      success: function (label, element) {
+        label.parent().removeClass('has-danger');
+        label.remove();
+      },
+      highlight: function (element, errorClass) {
+        $(element).parent().addClass('has-danger')
+        $(element).addClass('form-control-danger')
+      }
+    });
   });
 })(jQuery);

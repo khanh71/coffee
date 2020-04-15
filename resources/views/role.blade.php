@@ -2,12 +2,21 @@
 @section('title','Phân quyền người dùng')
 @section('css')
 <link rel="stylesheet" href="{{asset('vendors/datatables.net-bs4/dataTables.bootstrap4.css')}}">
+<link rel="stylesheet" href="{{asset('vendors/jquery-toast-plugin/jquery.toast.min.css')}}">
 @endsection
 
 @section('javascript')
 <script src="{{asset('vendors/datatables.net/jquery.dataTables.js')}}"></script>
 <script src="{{asset('vendors/datatables.net-bs4/dataTables.bootstrap4.js')}}"></script>
 <script src="{{asset('js/data-table.js')}}"></script>
+<script src="{{asset('vendors/jquery-toast-plugin/jquery.toast.min.js')}}"></script>
+<script src="{{asset('js/toastDemo.js')}}"></script>
+@if(count($errors)>0 || Session::has('err')) <script>
+    showDangerToast();
+</script> @endif
+@if(Session::has('success')) <script>
+    showSuccessToast();
+</script> @endif
 @endsection
 
 @section('content')
@@ -32,6 +41,9 @@
                                 </tr>
                             </thead>
                             <tbody>
+                                <tr>
+                                    <td colspan="5" class="text-uppercase font-weight-bold text-primary" style="font-size: large;"><i class="mdi mdi-chevron-left"></i><i class="mdi mdi-dots-horizontal"></i> quản lý <i class="mdi mdi-dots-horizontal"></i><i class="mdi mdi-chevron-right"></i></td>
+                                </tr>
                                 <tr>
                                     <td>Quản lý chức vụ</td>
                                     <td>
@@ -431,6 +443,22 @@
                                     <td></td>
                                 </tr>
                                 <tr>
+                                    <td>sửa thông tin cửa hàng</td>
+                                    <td>
+                                        <div class="form-check form-check-primary check-only">
+                                            <label class="form-check-label">
+                                                <input type="checkbox" class="form-check-input" name="shop_update" @if($pos->permissions['shop.update'] == true) checked @endif>
+                                            </label>
+                                        </div>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" class="text-uppercase font-weight-bold text-primary" style="font-size: large;"><i class="mdi mdi-chevron-left"></i><i class="mdi mdi-dots-horizontal"></i> bán hàng <i class="mdi mdi-dots-horizontal"></i><i class="mdi mdi-chevron-right"></i></td>
+                                </tr>
+                                <tr>
                                     <td>bán hàng</td>
                                     <td>
                                         <div class="form-check form-check-primary check-only">
@@ -488,6 +516,61 @@
                                         <div class="form-check form-check-primary check-only">
                                             <label class="form-check-label">
                                                 <input type="checkbox" class="form-check-input" name="sell_pay" @if($pos->permissions['sell.pay'] == true) checked @endif>
+                                            </label>
+                                        </div>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td colspan="5" class="text-uppercase font-weight-bold text-primary" style="font-size: large;"><i class="mdi mdi-chevron-left"></i><i class="mdi mdi-dots-horizontal"></i> báo cáo <i class="mdi mdi-dots-horizontal"></i><i class="mdi mdi-chevron-right"></i></td>
+                                </tr>
+                                <tr>
+                                    <td>tính lương</td>
+                                    <td>
+                                        <div class="form-check form-check-primary check-only">
+                                            <label class="form-check-label">
+                                                <input type="checkbox" class="form-check-input" name="report_salary" @if($pos->permissions['report.salary'] == true) checked @endif>
+                                            </label>
+                                        </div>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>báo cáo bán hàng</td>
+                                    <td>
+                                        <div class="form-check form-check-primary check-only">
+                                            <label class="form-check-label">
+                                                <input type="checkbox" class="form-check-input" name="report_sell" @if($pos->permissions['report.sell'] == true) checked @endif>
+                                            </label>
+                                        </div>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>báo cáo lợi nhuận</td>
+                                    <td>
+                                        <div class="form-check form-check-primary check-only">
+                                            <label class="form-check-label">
+                                                <input type="checkbox" class="form-check-input" name="report_profit" @if($pos->permissions['report.profit'] == true) checked @endif>
+                                            </label>
+                                        </div>
+                                    </td>
+                                    <td></td>
+                                    <td></td>
+                                    <td></td>
+                                </tr>
+                                <tr>
+                                    <td>chi phí nhập nguyên liệu</td>
+                                    <td>
+                                        <div class="form-check form-check-primary check-only">
+                                            <label class="form-check-label">
+                                                <input type="checkbox" class="form-check-input" name="report_cost" @if($pos->permissions['report.cost'] == true) checked @endif>
                                             </label>
                                         </div>
                                     </td>

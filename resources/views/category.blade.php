@@ -13,10 +13,6 @@
 <script src="{{asset('vendors/sweetalert/sweetalert.min.js')}}"></script>
 <script src="{{asset('vendors/jquery-toast-plugin/jquery.toast.min.js')}}"></script>
 <script src="{{asset('js/toastDemo.js')}}"></script>
-<script src="{{asset('vendors/jquery-validation/jquery.validate.min.js')}}"></script>
-<script src="{{asset('js/form-validation.js')}}"></script>
-<script src="{{asset('vendors/bootstrap-maxlength/bootstrap-maxlength.min.js')}}"></script>
-<script src="{{asset('js/bt-maxLength.js')}}"></script>
 @if(count($errors)>0 || Session::has('err')) <script>
     showDangerToast();
 </script> @endif

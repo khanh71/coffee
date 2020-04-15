@@ -13,10 +13,6 @@
 <script src="{{asset('vendors/sweetalert/sweetalert.min.js')}}"></script>
 <script src="{{asset('vendors/jquery-toast-plugin/jquery.toast.min.js')}}"></script>
 <script src="{{asset('js/toastDemo.js')}}"></script>
-<script src="{{asset('vendors/jquery-validation/jquery.validate.min.js')}}"></script>
-<script src="{{asset('js/form-validation.js')}}"></script>
-<script src="{{asset('vendors/bootstrap-maxlength/bootstrap-maxlength.min.js')}}"></script>
-<script src="{{asset('js/bt-maxLength.js')}}"></script>
 @if(count($errors)>0 || Session::has('err')) <script>
     showDangerToast();
 </script> @endif
@@ -138,9 +134,9 @@
                 </div>
                 @elseif($cates->count()==0)
                 <div class="text-center">
-                    <p>Chưa có món nào trong cửa hàng được thiết lập.</p>
-                    <p>Vui lòng thêm món vào cửa hàng và quay lại sau nhé.</p>
-                    <a class="btn btn-primary text-capitalize" href="{{route('category')}}">Thêm món</a>
+                    <p>Chưa có thực đơn nào trong cửa hàng được thiết lập.</p>
+                    <p>Vui lòng thêm thực đơn vào cửa hàng và quay lại sau nhé.</p>
+                    <a class="btn btn-primary text-capitalize" href="{{route('category')}}">Thêm thực đơn</a>
                 </div>
                 @endif
             </div>
