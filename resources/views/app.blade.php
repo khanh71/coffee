@@ -268,6 +268,43 @@
             </div>
         </div>
     </div>
+    <div class="modal fade" id="editeee" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content">
+                <div class="modal-header bg-info">
+                    <h5 class="modal-title text-uppercase" id="ModalLabel"><i class="mdi mdi-pencil-box-outline mr-1"></i>Sửa thông cá nhân</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <form class="forms-sample" id="formEee" method="post" action="{{route('edit-user')}}">
+                        @csrf
+                        <div class="form-group">
+                            <label>Họ tên</label>
+                            <input type="text" class="form-control form-control-lg text-capitalize" id="nameeee" name="nameeee" maxLength='50' required value="{{$eee->name}}">
+                        </div>
+                        <div class="form-group">
+                            <label>Địa chỉ</label>
+                            <input type="text" class="form-control form-control-lg text-capitalize" id="addresseee" name="addresseee" maxLength='150' required value="{{$eee->address}}">
+                        </div>
+                        <div class="form-group">
+                            <label>Ngày sinh</label>
+                            <input type="text" class="form-control form-control-lg" id="birthdayeee" name="birthdayeee" data-inputmask="'alias': 'date','placeholder': '_'" required value="{{$eee->birthday}}">
+                        </div>
+                        <div class="form-group">
+                            <label>Số điện thoại</label>
+                            <input type="text" class="form-control form-control-lg" id="phone" name="phoneeee" data-inputmask="'alias': 'phonevn'" required value="{{$eee->phone}}">
+                        </div>
+                        <div class="modal-footer">
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Hủy</button>
+                            <button class="btn btn-info btn-icon-text" type="submit"><i class="mdi mdi-content-save btn-icon-prepend"></i>Lưu</button>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
     <div class="modal fade" id="editlogin" tabindex="-1" role="dialog" aria-labelledby="ModalLabel" aria-hidden="true">
         <div class="modal-dialog" role="document">
             <div class="modal-content">
