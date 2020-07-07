@@ -2113,7 +2113,9 @@ class Controller extends BaseController
         $b = explode('/', $req->dayto);
         $dayfrom = Carbon::create($a[2], $a[1], $a[0]);
         $dayto = Carbon::create($b[2], $b[1], $b[0]);
-        $data = Workday::where('workday.shopid', Auth::user()->shopid)->where('wddate', '<=', $dayto)->where('wddate', '>=', $dayfrom)->get();
+        $data = Workday::where('workday.shopid', Auth::user()->shopid)
+        ->where('wddate', '<=', $dayto)->where('wddate', '>=', $dayfrom)
+        ->where('userid', $req->iduser)->get();
         return response()->json($data);
     }
 
