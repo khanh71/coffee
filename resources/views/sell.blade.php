@@ -60,9 +60,9 @@
             data: dataId,
             success: function(data) {
                 if ($.trim(data)) {
+                    model.find('#divdesk').append('<select class="form-control form-control-lg text-capitalize" id="newdesk" name="newdesk"></select>')
                     $.each(data, function(k, v) {
-                        model.find('#divdesk').append('<select class="form-control form-control-lg text-capitalize" id="newdesk" name="newdesk">' +
-                            '<option value="' + data[k].iddesk + '">' + data[k].deskname + '</option></select>')
+                        model.find('#newdesk').append('<option value="' + data[k].iddesk + '">' + data[k].deskname + '</option>')
                     })
                     model.find('#frmmerge').append('<div class="modal-footer">' +
                         '<button type="button" class="btn btn-light" data-dismiss="modal">Hủy</button>' +
