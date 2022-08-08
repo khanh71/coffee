@@ -13,11 +13,8 @@
     RewriteCond %{REQUEST_FILENAME} !-d
     # RewriteCond %{REQUEST_URI} (.+)/$
     # RewriteRule ^ %1 [L,R=301]
-RewriteCond %{THE_REQUEST} public/
-RewriteRule ^public/(.*) https://khanh7.herokuapp.com/$1 [R=301,L]
-
-RewriteCond %{REQUEST_URI} !public/
-RewriteRule ^(.*)$ /public/$1 [L]
+RewriteCond %{REQUEST_URI} !/public
+RewriteRule ^(.*)$ public/$1 [L]
 
 
     RewriteCond %{REQUEST_FILENAME} !-d
