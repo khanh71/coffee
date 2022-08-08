@@ -11,10 +11,10 @@
 
     # Redirect Trailing Slashes If Not A Folder...
     RewriteCond %{REQUEST_FILENAME} !-d
-    RewriteCond %{REQUEST_URI} !^public
-    RewriteRule ^((?!public/).*)$ public/$1 [L,NC]
+RewriteCond %{REQUEST_URI} !public/
+RewriteRule (.*) /public/$1 [L]
 
-    # Handle Front Controller...
+
     RewriteCond %{REQUEST_FILENAME} !-d
     RewriteCond %{REQUEST_FILENAME} !-f
     RewriteRule ^ index.php [L]
